@@ -71,7 +71,7 @@ function alzaManettaSX(){
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
 			if(ULTIMA_POS_MANETTA_SX>215){//sto andando indietro diminuendi velocita
-				direzione='AVANTI';
+				direzione='INDIETRO';
 				statoManettaSX='DIMINUISCI';
 			}else if(ULTIMA_POS_MANETTA_SX<215){//sto andando avanti aumentando velocita
 				direzione='AVANTI';
@@ -138,7 +138,7 @@ function alzaManettaDX(){
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
 			if(ULTIMA_POS_MANETTA_DX>215){//sto andando indietro diminuendi velocita
-				direzione='AVANTI';
+				direzione='INDIETRO';
 				statoManettaDX='DIMINUISCI';
 			}else if(ULTIMA_POS_MANETTA_DX<215){//sto andando avanti aumentando velocita
 				direzione='AVANTI';
