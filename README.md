@@ -30,3 +30,8 @@ eseguire cd rasppi3-gestione-carroarmato
 installare le dipendenze via npm
 
 npm install
+
+### Avvio backend
+l'avvio dello script node può essere fatta lanciando semplicemente il seguente comando:
+npm start
+che provvede ad avviare il file rasppi3-gestione-carroarmato.js
