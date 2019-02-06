@@ -21,7 +21,7 @@ Per scaricare Node.js vai a  nodejs.org.
 
 Per ottenere una copia del sorgente sulla macchina locale
 
-git clone https://github.com/SalvatoreArinisi/rasppi3-gestione-carroarmato
+git clone https://github.com/SalvatoreArinisi/rasppi3-gestione-carroarmato.git
 
 verrà creata la directory rasppi3-gestione-carroarmato
 
