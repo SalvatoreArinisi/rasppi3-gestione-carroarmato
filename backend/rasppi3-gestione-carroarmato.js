@@ -41,11 +41,11 @@ MOTORE_DX_FORWARD.pwmWrite(0);
 MOTORE_DX_BACKWARD.pwmWrite(0);
 
 
-const VELOCITA_MINIMA=50;
-var VELOCITA_DRITTA=VELOCITA_MINIMA;
-var VELOCITA_SX=VELOCITA_MINIMA;
-var VELOCITA_DX=VELOCITA_MINIMA;
-var deltaVelocita=20; //incremento/decremento di velocita per ogni AUMENTO/DIMINUISCO di manetta
+const VELOCITA_ZERO=55;//a questa velocita il carro è fermo
+var VELOCITA_DRITTA=VELOCITA_ZERO;
+var VELOCITA_SX=VELOCITA_ZERO;
+var VELOCITA_DX=VELOCITA_ZERO;
+var deltaVelocita=40; //incremento/decremento di velocita per ogni AUMENTO/DIMINUISCO di manetta
 var direzioneTreno;
 //imposto frequenza a 2KHz
 //MOTORE_SX_FORWARD.pwmFrequency(2000);
@@ -56,11 +56,11 @@ var direzioneTreno;
 // =======================
 log4js.configure({
     appenders: [
-        {type: 'file', filename: 'carroMecucinu-server.log', category: 'carroMecucinu-server'}
+        {type: 'file', filename: 'rasppi3-gestione-carroarmato.log', category: 'rasppi3-gestione-carroarmato'}
     ],
     replaceConsole: false/* se true il console.log viene disabilitato.*/
 });
-var logger = log4js.getLogger('carroMecucinu-server');
+var logger = log4js.getLogger('rasppi3-gestione-carroarmato');
 logger.setLevel('DEBUG');
 // ===================================
 // Implementazione metodi REST =======
@@ -92,6 +92,14 @@ app.get('/motore', function (req, res) {
     }	
 })
 
+app.get('/stopCarro', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+    var esito={};
+		esito = spegniMotore();
+		esito.codErr='200';	
+		res.json(esito);
+})
+
 app.get('/luci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
     var esito={};
@@ -112,14 +120,6 @@ app.get('/luci', function (req, res) {
           'esempio: /luci?stato=ACCESE'
 			});
     }	
-})
-
-app.get('/stopTreno', function (req, res) {
-	res.header("Access-Control-Allow-Origin", "*");
-    var esito={};
-		esito = spegniMotore();
-		esito.codErr='200';	
-		res.json(esito);
 })
 // ==================================================
 // Implementazione metodi per gestione MOTORE =======
@@ -170,8 +170,8 @@ function diminuisciManetta(direzione,verso){
 	 velocitaVerso= VELOCITA_DRITTA; 
   }
   
-  if (velocitaVerso == VELOCITA_MINIMA || (velocitaVerso - deltaVelocita <=VELOCITA_MINIMA)) {
-    velocitaVerso=VELOCITA_MINIMA;
+  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - deltaVelocita <=VELOCITA_ZERO)) {
+    velocitaVerso=VELOCITA_ZERO;
 	//aggiorna variabile globale con la nuova velocita
 	if(verso=='SX'){
 		 VELOCITA_SX=velocitaVerso;
@@ -207,6 +207,9 @@ function spegniMotore(){
     MOTORE_SX_BACKWARD.pwmWrite(0);
 	MOTORE_DX_FORWARD.pwmWrite(0); 
     MOTORE_DX_BACKWARD.pwmWrite(0);	
+	VELOCITA_DRITTA=VELOCITA_ZERO;
+	VELOCITA_SX=VELOCITA_ZERO;
+	VELOCITA_DX=VELOCITA_ZERO;
 	logger.debug('spento.');
 }
 function muoviMotore(velocitaImpostata,direzione,verso){
@@ -249,18 +252,18 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 	if(velocitaImpostata==0){
 		if(verso=='SX'){
 		  esito.velocitaFisicaMotoreSX=0;
-		  esito.pwmMotoreFermoSX='<='+VELOCITA_MINIMA;
+		  esito.pwmMotoreFermoSX='<='+VELOCITA_ZERO;
 		  esito.pwmCalcolatoSX=0; 	
           esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;		  
 		}else if(verso=='DX'){
 		  esito.velocitaFisicaMotoreDX=0;
-		  esito.pwmMotoreFermoDX='<='+VELOCITA_MINIMA;
+		  esito.pwmMotoreFermoDX='<='+VELOCITA_ZERO;
 		  esito.pwmCalcolatoDX=0;   		  
 		  esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;
 		}else if(verso=='DRITTO'){
 		  esito.velocitaFisicaMotoreSX=0;	
 		  esito.velocitaFisicaMotoreDX=0;
-		  esito.pwmMotoreFermo='<='+VELOCITA_MINIMA;
+		  esito.pwmMotoreFermo='<='+VELOCITA_ZERO;
 		  esito.pwmCalcolato=0;    		  
 		}	
 		  esito.stepManetta=deltaVelocita;
@@ -276,39 +279,15 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 		}			
 		
 	  esito.stepManetta=deltaVelocita;
-	  esito.pwmMotoreFermo='<='+VELOCITA_MINIMA;
-	  //pwmCalcolato rappresenta il PWM - il PWM minimo (es: pwm 70->pwmCalcolato = 70-50 = 20)
-	  esito.pwmCalcolatoSX=velocitaFisicaImpostataSX-VELOCITA_MINIMA;
-	  esito.pwmCalcolatoDX=velocitaFisicaImpostataDX-VELOCITA_MINIMA;
+	  esito.pwmMotoreFermo='<='+VELOCITA_ZERO;
+	  //pwmCalcolato rappresenta il PWM - il PWM minimo (es: pwm 70->pwmCalcolato = 70-55 = 15)
+	  esito.pwmCalcolatoSX=velocitaFisicaImpostataSX-VELOCITA_ZERO;
+	  esito.pwmCalcolatoDX=velocitaFisicaImpostataDX-VELOCITA_ZERO;
 	}			 
 	logger.debug('muoviMotore END');
 	return esito;
 }
 
-function stopTreno(){
-  var esito ={};
-  	logger.debug('stopTreno START');
-   	logger.debug('direzioneTreno ='+direzioneTreno);
-  if(direzioneTreno=='AVANTI' || direzioneTreno =='INDIETRO'){
-    //acquisisco velocita di una ruota(l'altra è uguale)
-     var velocitaFisicaImpostata;
-     velocitaFisicaImpostata=MOTORE_SX_FORWARD.getPwmDutyCycle();
-     	logger.debug('velocitaFisicaImpostata = '+velocitaFisicaImpostata);
-     for (var i=velocitaFisicaImpostata-1; i>=0; i--){
-       logger.debug('imposto velocita ='+i+' direzione '+direzioneTreno);
-       muoviMotore(i,direzioneTreno);
-       for (var pausa=5000000; pausa >=0; pausa--){
-         //pausa
-       }
-     }
-  }
-  	logger.debug('stopTreno END');
-  VELOCITA_DRITTA=VELOCITA_MINIMA;
-  VELOCITA_SX=VELOCITA_MINIMA;
-  VELOCITA_DX=VELOCITA_MINIMA;
-  esito.msg='treno fermato';
-  return esito;   
-}
 
 function accendiLuci(){
   var esito ={};

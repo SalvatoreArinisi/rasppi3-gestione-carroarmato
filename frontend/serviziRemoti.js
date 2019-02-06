@@ -1,15 +1,15 @@
 //es:
 // http://192.168.1.10:8080/motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
-var urlMotoreTreninoAndrea = "http://192.168.1.10:8080/motore?";
-var urlStopTreninoAndrea = "http://192.168.1.10:8080/stopTreno";
+var urlMotoreCarroArmato = "http://192.168.1.10:8080/motore?";
+var urlStopCarroArmato = "http://192.168.1.10:8080/stopCarro";
 
 
 
-function setManettaTreno(direzione,statoManetta,verso){
+function setManettaCarro(direzione,statoManetta,verso){
 	var response = jQuery.Deferred();
 	$.ajax({
 		type: "GET",
-		url: urlMotoreTreninoAndrea+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso,
+		url: urlMotoreCarroArmato+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso,
 		success: function(risposta) {
 			response.resolve(risposta);
 		},
@@ -21,15 +21,15 @@ function setManettaTreno(direzione,statoManetta,verso){
 }
 
 /**
-	Ferma il treno tramite 
+	Ferma il Carro
 	chiamata REST
 */
 
-function stopTreno(){
+function stopCarro(){
 	var response = jQuery.Deferred();
 	$.ajax({
 		type: "GET",
-		url: urlStopTreninoAndrea,
+		url: urlStopCarroArmato,
 		success: function(risposta) {
 			response.resolve(risposta);
 		},
