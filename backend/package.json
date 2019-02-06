@@ -1,0 +1,12 @@
+{
+  "name": "rasppi3-gestione-carroarmato",
+  "main": "rasppi3-gestione-carroarmato.js",
+  "dependencies": {
+    "express": "4.16.3",
+    "log4js": "0.6.33",
+    "pigpio": "^1.1.2"
+  },
+  "scripts": {
+    "start": "sudo nodejs rasppi3-gestione-carroarmato.js"
+  }
+}

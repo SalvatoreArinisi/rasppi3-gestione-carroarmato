@@ -1,0 +1,8 @@
+{
+  "name": "rasppi3-gestione-carroarmatoFE",
+  "main": "rasppi3-gestione-carroarmatoFE",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "svg.js": "^2.7.1"
+  }
+}
