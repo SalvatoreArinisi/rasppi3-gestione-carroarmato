@@ -222,7 +222,7 @@ function spegniMotore(){
 }
 function muoviMotore(velocitaImpostata,direzione,verso){
 	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
-	logger.debug('..velocitaImpostata '+ );
+	logger.debug('..velocitaImpostata '+ velocitaImpostata);
 	var esito ={};
   var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX;
 	if(direzione=='AVANTI'){
