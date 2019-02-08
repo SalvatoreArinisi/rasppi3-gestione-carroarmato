@@ -1,7 +1,7 @@
 //es:
 // http://192.168.1.10:8080/motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
-var urlMotoreCarroArmato = "http://192.168.1.10:8080/motore?";
-var urlStopCarroArmato = "http://192.168.1.10:8080/stopCarro";
+var urlMotoreCarroArmato = "http://95.234.98.36:8080/motore?";
+var urlStopCarroArmato = "http://95.234.98.36:8080/stopCarro";
 
 
 
