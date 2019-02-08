@@ -7,14 +7,18 @@ var urlStopCarroArmato = "http://95.234.98.36:8080/stopCarro";
 
 function setManettaCarro(direzione,statoManetta,verso){
 	var response = jQuery.Deferred();
+	var urlDaChiamare=urlMotoreCarroArmato+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso;
 	$.ajax({
 		type: "GET",
-		url: urlMotoreCarroArmato+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso,
+		url: urlDaChiamare,
 		success: function(risposta) {
 			response.resolve(risposta);
 		},
 		error: function(e) {
-			 response.reject(e);
+			 var esito={};
+			 esito.errore=e;
+			 esito.url=urlDaChiamare;
+			 response.reject(esito);
 		}
 	});
 	return response.promise();

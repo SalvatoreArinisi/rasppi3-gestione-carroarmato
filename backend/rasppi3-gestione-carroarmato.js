@@ -43,6 +43,7 @@ MOTORE_DX_BACKWARD.pwmWrite(0);
 
 const VELOCITA_ZERO=55;//a questa velocita il carro è fermo
 var DELTA_VELOCITA=40; //incremento/decremento di velocita per ogni AUMENTO/DIMINUISCO di manetta
+var STOP=0;
 var direzioneCarro;
 //imposto frequenza a 2KHz
 //MOTORE_SX_FORWARD.pwmFrequency(2000);
@@ -159,7 +160,7 @@ function diminuisciManetta(direzione,verso){
   
   if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - DELTA_VELOCITA <=VELOCITA_ZERO)) {
     velocitaVerso=VELOCITA_ZERO;	  	
-    esito=muoviMotore(0,direzione,verso);
+    esito=muoviMotore(STOP,direzione,verso);
     esito.msg='motore fermo';
   }else{
 	  velocitaVerso -= DELTA_VELOCITA;
@@ -169,6 +170,7 @@ function diminuisciManetta(direzione,verso){
    return esito;	
 }
 function getVelocitaMotoreSX(direzione){
+	logger.debug('START getVelocitaMotoreSX, direzione = '+direzione); 
 	var velocitaCalcolata;
 	if(direzione=='AVANTI'){
 		velocitaCalcolata=MOTORE_SX_FORWARD.getPwmDutyCycle();
@@ -181,10 +183,12 @@ function getVelocitaMotoreSX(direzione){
 			velocitaCalcolata=VELOCITA_ZERO;
 		}
 	}
+	logger.debug('END getVelocitaMotoreSX');
 	return velocitaCalcolata;
 }
 
 function getVelocitaMotoreDX(direzione){
+	logger.debug('START getVelocitaMotoreDX, direzione = '+direzione); 
 	var velocitaCalcolata;
 	if(direzione=='AVANTI'){
 		velocitaCalcolata=MOTORE_DX_FORWARD.getPwmDutyCycle();
@@ -197,20 +201,23 @@ function getVelocitaMotoreDX(direzione){
 			velocitaCalcolata=VELOCITA_ZERO;
 		}
 	}
+	logger.debug('END getVelocitaMotoreDX'); 
 	return velocitaCalcolata;	
 }
 function getMotorePiuVeloce(direzione){
+	logger.debug('START getMotorePiuVeloce, direzione = '+direzione); 
 	var vdx = getVelocitaMotoreDX(direzione);
 	var vsx = getVelocitaMotoreSX(direzione);
 	var velocita = vdx>vsx?vdx:vsx;
+	logger.debug('END getMotorePiuVeloce');
 	return velocita;
 }
 function spegniMotore(){
 	logger.debug('spengo il motore..'); 
-	MOTORE_SX_FORWARD.pwmWrite(1); 
-    MOTORE_SX_BACKWARD.pwmWrite(1);
-	MOTORE_DX_FORWARD.pwmWrite(1); 
-    MOTORE_DX_BACKWARD.pwmWrite(1);	
+	MOTORE_SX_FORWARD.pwmWrite(STOP); 
+    MOTORE_SX_BACKWARD.pwmWrite(STOP);
+	MOTORE_DX_FORWARD.pwmWrite(STOP); 
+    MOTORE_DX_BACKWARD.pwmWrite(STOP);	
 	logger.debug('spento.');
 }
 function muoviMotore(velocitaImpostata,direzione,verso){
@@ -249,42 +256,12 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();		
 		}	
 	}
-	
-	if(velocitaImpostata==0){
-		if(verso=='SX'){
-		  esito.velocitaFisicaMotoreSX=0;
-		  esito.pwmMotoreFermoSX='<='+VELOCITA_ZERO;
-		  esito.pwmCalcolatoSX=0; 	
-          esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;		  
-		}else if(verso=='DX'){
-		  esito.velocitaFisicaMotoreDX=0;
-		  esito.pwmMotoreFermoDX='<='+VELOCITA_ZERO;
-		  esito.pwmCalcolatoDX=0;   		  
-		  esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;
-		}else if(verso=='DRITTO'){
-		  esito.velocitaFisicaMotoreSX=0;	
-		  esito.velocitaFisicaMotoreDX=0;
-		  esito.pwmMotoreFermo='<='+VELOCITA_ZERO;
-		  esito.pwmCalcolato=0;    		  
-		}	
-		  esito.stepManetta=DELTA_VELOCITA;
-				
-	}else{
-		if(verso=='SX'){
-		  esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;		
-		}else if(verso=='DX'){
-		  esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;	  						
-		}else if(verso=='DRITTO'){
-		  esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;
-		  esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;	  
-		}			
-		
-	  esito.stepManetta=DELTA_VELOCITA;
-	  esito.pwmMotoreFermo='<='+VELOCITA_ZERO;
-	  //pwmCalcolato rappresenta il PWM - il PWM minimo (es: pwm 70->pwmCalcolato = 70-55 = 15)
-	  esito.pwmCalcolatoSX=velocitaFisicaImpostataSX-VELOCITA_ZERO;
-	  esito.pwmCalcolatoDX=velocitaFisicaImpostataDX-VELOCITA_ZERO;
-	}			 
+	esito.stepManetta=DELTA_VELOCITA;
+	esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;
+	esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;	  
+	//pwmCalcolato rappresenta il PWM - il PWM minimo o VELOCITA_ZERO (es: pwm 70->pwmCalcolato = 70-55 = 15)
+	esito.pwmCalcolatoSX=velocitaFisicaImpostataSX-VELOCITA_ZERO;
+	esito.pwmCalcolatoDX=velocitaFisicaImpostataDX-VELOCITA_ZERO;			 
 	logger.debug('muoviMotore END');
 	return esito;
 }

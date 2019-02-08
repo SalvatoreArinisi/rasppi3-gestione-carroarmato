@@ -23,10 +23,9 @@ var ULTIMA_POS_MANETTA_DX=215;//215 è al centro manetta. Corrisponde allo ZERO
 var deltaVariazioneManetta=20;
 var STEP_SX=0;
 var STEP_DX=0;
-
-
-
-
+//variabili per la gestione del lock sulle 2 manette
+var lockManettaSX=false;
+var lockManettaDX=false;
 //manetta SX e DX
 var manopolaSX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(190, ULTIMA_POS_MANETTA_SX);
 var manopolaDX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(310, ULTIMA_POS_MANETTA_DX);
@@ -51,15 +50,16 @@ var labelValoreManettaDX = canvas.text(STEP_DX.toString()).move(320,390).font({s
 var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(200,390).font({size: 20, fill: 'white', family: 'verdana' });
 
 //Input al servizio remoto del motore
-var inServizioRemotoMotore= canvas.text('nessuna input ancora inviato al server').move(420,100).font({size: 20, fill: 'white', family: 'verdana' });
+var inServizioRemotoMotore= canvas.text('nessuna input ancora inviato al server').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
 
 //Output del servizio remoto del motore
-var outServizioRemotoMotore= canvas.text('nessuna risposta dal server ancora').move(420,140).font({size: 20, fill: 'white', family: 'verdana' });
+var outServizioRemotoMotore= canvas.text('nessuna risposta dal server ancora').move(420,140).font({size: 10, fill: 'white', family: 'verdana' });
 
 function alzaManettaSX(){
-	if(ULTIMA_POS_MANETTA_SX<=115) {
+	if(lockManettaSX || ULTIMA_POS_MANETTA_SX<=115) {
 		return;//sono gia al massimo alzata manetta sinistra
 	}else{
+		toggleLockManetta('SX');
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
 		STEP_SX++;
 		stampaValorePosizioneManettaSX();
@@ -81,19 +81,22 @@ function alzaManettaSX(){
 			setManettaCarro(direzione,statoManettaSX,'SX').
 				then(
 					function (risposta) 
-					{			
+					{	
+						toggleLockManetta('SX');
 						stampaDatiOutServizioMotore(risposta);
 					}, function (error) {
-					   alert("Errore servizio remoto durante decelerazione "+errore);
+						toggleLockManetta('SX');
+					  outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 					});					
 		}		
 	}
 }
 
 function abbassaManettaSX(){
-	if(ULTIMA_POS_MANETTA_SX>=315) {//massima posizione in basso della manetta
+	if(lockManettaSX || ULTIMA_POS_MANETTA_SX>=315) {//massima posizione in basso della manetta
 		return;//sono gia al massimo abbassata manetta sinistra
 	}else{
+		toggleLockManetta('SX');
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
 		STEP_SX--;
 		stampaValorePosizioneManettaSX();
@@ -116,17 +119,20 @@ function abbassaManettaSX(){
 				then(
 					function (risposta) 
 					{			
+						toggleLockManetta('SX');
 						stampaDatiOutServizioMotore(risposta);
 					}, function (error) {
-					   alert("Errore servizio remoto durante decelerazione "+errore);
+						toggleLockManetta('SX');
+						outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 					});			
 		}		
 	}	
 }
 function alzaManettaDX(){
-	if(ULTIMA_POS_MANETTA_DX<=115) {
+	if(lockManettaDX || ULTIMA_POS_MANETTA_DX<=115) {
 		return;//sono gia al massimo alzata manetta sinistra
 	}else{
+		toggleLockManetta('DX');
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
 		STEP_DX++;
 		stampaValorePosizioneManettaDX();
@@ -149,18 +155,21 @@ function alzaManettaDX(){
 				then(
 					function (risposta) 
 					{			
+						toggleLockManetta('DX');
 						stampaDatiOutServizioMotore(risposta);
 					}, function (error) {
-					   alert("Errore servizio remoto durante decelerazione "+errore);
+						toggleLockManetta('DX');
+						outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 					});							
 		}		
 	}
 }
 
 function abbassaManettaDX(){
-	if(ULTIMA_POS_MANETTA_DX>=315) {//massima posizione in basso della manetta
+	if(lockManettaDX || ULTIMA_POS_MANETTA_DX>=315) {//massima posizione in basso della manetta
 		return;//sono gia al massimo abbassata manetta sinistra
 	}else{
+		toggleLockManetta('DX');
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+deltaVariazioneManetta;
 		STEP_DX--;
 		stampaValorePosizioneManettaDX();
@@ -182,10 +191,12 @@ function abbassaManettaDX(){
 			setManettaCarro(direzione,statoManettaDX,'DX').
 				then(
 					function (risposta) 
-					{			
+					{	
+						toggleLockManetta('DX');
 						stampaDatiOutServizioMotore(risposta);
 					}, function (error) {
-					   alert("Errore servizio remoto durante decelerazione "+errore);
+						toggleLockManetta('DX');
+						outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 					});					
 		}	
 	}	
@@ -206,43 +217,46 @@ function alzaManette(){
 		while(STEP_DX<STEP_SX){
 			alzaManettaDX();
 		}		
-	}else if(STEP_DX==STEP_SX && ULTIMA_POS_MANETTA_DX==ULTIMA_POS_MANETTA_SX){
+	}else if( (!lockManettaDX && !lockManettaSX) && 
+				STEP_DX==STEP_SX && STEP_DX<5){//minore di 5 significa che posso aumentare ancora (max 5)
 		//alzo tutte 2 le manette
-		if(ULTIMA_POS_MANETTA_DX<=115 || ULTIMA_POS_MANETTA_SX<=115) {
-			return;//sono gia al massimo alzata manette
+		toggleLockManetta('DX');
+		toggleLockManetta('SX');
+		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
+		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
+		STEP_DX++;
+		STEP_SX++;
+		stampaValorePosizioneManettaDX();
+		stampaValorePosizioneManettaSX();
+		manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
+		manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+		var direzione='AVANTI';
+		var statoManetta='AUMENTA';			
+		if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO ULTIMA_POS_MANETTA_SX è uguale
+			stopCarro();
+			stampaDatiInputServizioMotore('STOP','','');
 		}else{
-			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
-			ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
-			STEP_DX++;
-			STEP_SX++;
-			stampaValorePosizioneManettaDX();
-			stampaValorePosizioneManettaSX();
-			manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
-			manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
-			var direzione='AVANTI';
-			var statoManetta='AUMENTA';			
-			if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO ULTIMA_POS_MANETTA_SX è uguale
-				stopCarro();
-				stampaDatiInputServizioMotore('STOP','','');
-			}else{
-				if(ULTIMA_POS_MANETTA_DX>215){//sto andando indietro diminuendi velocita
-					direzione='INDIETRO';
-					statoManetta='DIMINUISCI';
-				}else if(ULTIMA_POS_MANETTA_DX<215){//sto andando avanti aumentando velocita
-					direzione='AVANTI';
-					statoManetta='AUMENTA';
-				}		
-				stampaDatiInputServizioMotore(direzione,statoManetta,'DRITTO');
-				setManettaCarro(direzione,statoManetta,'DRITTO').
-					then(
-						function (risposta) 
-						{			
-							stampaDatiOutServizioMotore(risposta);
-						}, function (error) {
-						alert("Errore servizio remoto durante decelerazione "+errore);
-					});					
-				
-			}
+			if(ULTIMA_POS_MANETTA_DX>215){//sto andando indietro diminuendi velocita
+				direzione='INDIETRO';
+				statoManetta='DIMINUISCI';
+			}else if(ULTIMA_POS_MANETTA_DX<215){//sto andando avanti aumentando velocita
+				direzione='AVANTI';
+				statoManetta='AUMENTA';
+			}		
+			stampaDatiInputServizioMotore(direzione,statoManetta,'DRITTO');
+			setManettaCarro(direzione,statoManetta,'DRITTO').
+				then(
+					function (risposta) 
+					{		
+						toggleLockManetta('DX');
+						toggleLockManetta('SX');
+						stampaDatiOutServizioMotore(risposta);
+					}, function (error) {
+						toggleLockManetta('DX');
+						toggleLockManetta('SX');
+						outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+				});					
+			
 		}
 	}
 }
@@ -267,6 +281,8 @@ function abbassaManette(){
 		if(ULTIMA_POS_MANETTA_DX>=315 || ULTIMA_POS_MANETTA_SX>=315) {
 			return;//sono gia al massimo abbassata manette
 		}else{
+			   toggleLockManetta('DX');
+			   toggleLockManetta('SX');			
 			   ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+deltaVariazioneManetta;
 			   ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
 			   STEP_DX--;
@@ -292,10 +308,14 @@ function abbassaManette(){
 					setManettaCarro(direzione,statoManetta,'DRITTO').
 						then(
 							function (risposta) 
-							{			
+							{		
+								toggleLockManetta('DX');
+								toggleLockManetta('SX');								
 								stampaDatiOutServizioMotore(risposta);
 							}, function (error) {
-							alert("Errore servizio remoto durante decelerazione "+errore);
+								toggleLockManetta('DX');
+								toggleLockManetta('SX');								
+								outServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 						});					
 				}
 		}
@@ -312,6 +332,20 @@ function azzeraManetta(){
 	ULTIMA_POS_MANETTA_DX = 215;
 	manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
 	manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+}
+
+//Blocca/Sblocca una determinata manetta
+function toggleLockManetta(manetta){
+	var colore='gray';
+	if(manetta=='SX'){
+	  lockManettaSX=!lockManettaSX;
+	  colore=lockManettaSX?'gray':'orange';
+	  manopolaSX.fill(colore);
+	}else if(manetta=='DX'){
+		lockManettaDX=!lockManettaDX;
+		colore=lockManettaDX?'gray':'orange';
+		manopolaDX.fill(colore);
+	}
 }
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
