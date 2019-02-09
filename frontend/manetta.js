@@ -56,9 +56,7 @@ var inServizioRemotoMotore= canvas.text('nessuna input ancora inviato al server'
 var outServizioRemotoMotore= canvas.text('nessuna risposta dal server ancora').move(420,140).font({size: 10, fill: 'white', family: 'verdana' });
 
 function alzaManettaSX(){
-	if(lockManettaSX || ULTIMA_POS_MANETTA_SX<=115) {
-		return;//sono gia al massimo alzata manetta sinistra
-	}else{
+	if(!lockManettaSX && STEP_SX<5) {	
 		toggleLockManetta('SX');
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
 		STEP_SX++;
@@ -67,7 +65,7 @@ function alzaManettaSX(){
 		var direzione='AVANTI';
 		var statoManettaSX='AUMENTA';
 		if(ULTIMA_POS_MANETTA_SX==215){//sono a meta quindi ZERO
-			stopCarro();
+			stopCarro('SX');
 			toggleLockManetta('SX');
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
@@ -94,9 +92,7 @@ function alzaManettaSX(){
 }
 
 function abbassaManettaSX(){
-	if(lockManettaSX || ULTIMA_POS_MANETTA_SX>=315) {//massima posizione in basso della manetta
-		return;//sono gia al massimo abbassata manetta sinistra
-	}else{
+	if(!lockManettaSX && STEP_SX>-5) {//massima posizione in basso della manetta
 		toggleLockManetta('SX');
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
 		STEP_SX--;
@@ -105,7 +101,7 @@ function abbassaManettaSX(){
 		var direzione='AVANTI';
 		var statoManettaSX='AUMENTA';
 		if(ULTIMA_POS_MANETTA_SX==215){//sono a meta quindi ZERO
-			stopCarro();
+			stopCarro('SX');
 			toggleLockManetta('SX');
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
@@ -131,9 +127,7 @@ function abbassaManettaSX(){
 	}	
 }
 function alzaManettaDX(){
-	if(lockManettaDX || ULTIMA_POS_MANETTA_DX<=115) {
-		return;//sono gia al massimo alzata manetta sinistra
-	}else{
+	if(!lockManettaDX && STEP_DX<5) {
 		toggleLockManetta('DX');
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
 		STEP_DX++;
@@ -142,7 +136,7 @@ function alzaManettaDX(){
 		var direzione='AVANTI';
 		var statoManettaDX='AUMENTA';
 		if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO
-			stopCarro();
+			stopCarro('DX');
 			toggleLockManetta('DX');
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
@@ -169,9 +163,7 @@ function alzaManettaDX(){
 }
 
 function abbassaManettaDX(){
-	if(lockManettaDX || ULTIMA_POS_MANETTA_DX>=315) {//massima posizione in basso della manetta
-		return;//sono gia al massimo abbassata manetta sinistra
-	}else{
+	if(!lockManettaDX && STEP_DX>-5) {//massima posizione in basso della manetta
 		toggleLockManetta('DX');
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+deltaVariazioneManetta;
 		STEP_DX--;
@@ -180,7 +172,7 @@ function abbassaManettaDX(){
 		var direzione='AVANTI';
 		var statoManettaDX='AUMENTA';
 		if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO
-			stopCarro();
+			stopCarro('DX');
 			toggleLockManetta('DX');
 			stampaDatiInputServizioMotore('STOP','','');
 		}else{
@@ -237,7 +229,7 @@ function alzaManette(){
 		var direzione='AVANTI';
 		var statoManetta='AUMENTA';			
 		if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO ULTIMA_POS_MANETTA_SX è uguale
-			stopCarro();
+			stopCarro('DRITTO');
 			toggleLockManetta('DX');
 			toggleLockManetta('SX');		
 			stampaDatiInputServizioMotore('STOP','','');
@@ -298,7 +290,7 @@ function abbassaManette(){
 	   var direzione='AVANTI';
 	   var statoManetta='AUMENTA';		
 		if(ULTIMA_POS_MANETTA_DX==215){//sono a meta quindi ZERO ULTIMA_POS_MANETTA_SX è uguale
-			stopCarro();
+			stopCarro('DRITTO');
 			toggleLockManetta('DX');
 			toggleLockManetta('SX');		
 			stampaDatiInputServizioMotore('STOP','','');
@@ -328,7 +320,7 @@ function abbassaManette(){
 }
 //Ferma il carro
 function azzeraManetta(){
-	stopCarro();
+	stopCarro('DRITTO');
 	STEP_DX=0;
 	STEP_SX=0;
 	stampaValorePosizioneManettaDX();

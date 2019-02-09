@@ -1,7 +1,7 @@
 //es:
 // http://192.168.1.10:8080/motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
 var urlMotoreCarroArmato = "http://95.234.98.36:8080/motore?";
-var urlStopCarroArmato = "http://95.234.98.36:8080/stopCarro";
+var urlStopCarroArmato = "http://95.234.98.36:8080/stopCarro?";
 
 
 
@@ -29,11 +29,11 @@ function setManettaCarro(direzione,statoManetta,verso){
 	chiamata REST
 */
 
-function stopCarro(){
+function stopCarro(verso){
 	var response = jQuery.Deferred();
 	$.ajax({
 		type: "GET",
-		url: urlStopCarroArmato,
+		url: urlStopCarroArmato+"verso="+verso,
 		success: function(risposta) {
 			response.resolve(risposta);
 		},

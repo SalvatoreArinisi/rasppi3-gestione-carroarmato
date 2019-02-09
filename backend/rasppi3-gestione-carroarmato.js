@@ -120,9 +120,16 @@ app.get('/stopCarro', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
     ultimaDirezioneSX=null;
 	ultimaDirezioneDX=null;
+	var checkVerso=req.query.verso=='SX' || req.query.verso=='DX'|| req.query.verso=='DRITTO';
 	var esito={};
-	esito = spegniMotore();
-	esito.codErr='200';	
+	if(checkVerso){
+	  spegniMotore(req.query.verso);
+	  esito.codErr='200';	
+	}else{
+		esito.codErr='500';
+		esito.messaggio='specificare verso SX o DX'+
+		 'esempio: /stopCarro?verso=SX';
+	}
 	res.json(esito);
 })
 
@@ -165,7 +172,7 @@ function aumentaManetta(direzione,verso){
 	  if(vdx!=vsx){
 		//Fermo il motore
 		spegnimentoForzato=true;
-		spegniMotore();
+		spegniMotore(verso);
 		esito.msg='NON aumento la manetta\n i motori viaggiano a velocita diversa\n FORZO spegnimento motore';
 		esito.direzione=direzione;
 		esito.verso=verso;
@@ -200,7 +207,7 @@ function diminuisciManetta(direzione,verso){
 	  if(vdx!=vsx){
 		//Fermo il motore
 		spegnimentoForzato=true;
-		spegniMotore();
+		spegniMotore(verso);
 		esito.msg='NON diminusco la manetta\n i motori viaggiano a velocita diversa\n FORZO spegnimento motore';
 		esito.direzione=direzione;
 		esito.verso=verso;
@@ -257,12 +264,20 @@ function getVelocitaMotoreDX(direzione){
 	return velocitaCalcolata;	
 }
 
-function spegniMotore(){
-	logger.debug('spengo il motore..'); 
-	MOTORE_SX_FORWARD.pwmWrite(STOP); 
-    MOTORE_SX_BACKWARD.pwmWrite(STOP);
-	MOTORE_DX_FORWARD.pwmWrite(STOP); 
-    MOTORE_DX_BACKWARD.pwmWrite(STOP);	
+function spegniMotore(verso){
+	logger.debug('spengo il motore..'+verso);
+    if(verso=='SX'){
+		MOTORE_SX_FORWARD.pwmWrite(STOP); 
+		MOTORE_SX_BACKWARD.pwmWrite(STOP);
+	}else if(verso=='DX'){
+		MOTORE_DX_FORWARD.pwmWrite(STOP); 
+		MOTORE_DX_BACKWARD.pwmWrite(STOP);	
+	}else {
+		MOTORE_SX_FORWARD.pwmWrite(STOP); 
+		MOTORE_SX_BACKWARD.pwmWrite(STOP);
+		MOTORE_DX_FORWARD.pwmWrite(STOP); 
+		MOTORE_DX_BACKWARD.pwmWrite(STOP);	
+	}	
 	logger.debug('spento.');
 }
 function muoviMotore(velocitaImpostata,direzione,verso){
@@ -343,7 +358,7 @@ var server = http.createServer(app);
 //con questo metodo forzo la chiusura di eventuali eventi (timer, ecc.)
 process.on('SIGINT', function() {
   logger.debug(' spengo il Trenino Andrea ...');
-  spegniMotore();
+  spegniMotore('DRITTO');
   console.log(' eseguo il process.exit()..');
   process.exit(0);
 });
