@@ -126,142 +126,92 @@ function aumentaManetta(direzione,verso){
   logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso);
   var esito ={};
   var velocitaVerso;
-  var vdx;
-  var vsx;
   if(verso=='SX'){
-	 velocitaVerso = Math.abs(getVelocitaMotoreSX());
+	 velocitaVerso = getVelocitaMotoreSX(direzione);
   }else if(verso=='DX'){
-	 velocitaVerso =Math.abs(getVelocitaMotoreDX()); 
+	 velocitaVerso =getVelocitaMotoreDX(direzione); 
   }else if(verso=='DRITTO'){
-	vdx = getVelocitaMotoreDX();
-	vsx = getVelocitaMotoreSX();
-	if(vdx==vsx){//se sono ugual velocita
-		velocitaVerso=Math.abs(vdx);
-	}
+	 velocitaVerso= getMotorePiuVeloce(direzione); 
   }
 
-  if(verso=='DRITTO' && vdx != vsx){
-	  var velocitaParificata;
-	  //In caso di comando DRITTO Parifico le due velocita se sono diverse
-	  //portando la piu lenta alla stessa della più
-	  //veloce
-	  if(vdx<vsx){
-		  //se il motore di destra è minore (o semplicemente gira indietro rispetto al sinistro)
-		  //lo porto allo stesso valore del sinistro
-		  velocitaParificata=vsx;
-	  }else if(vdx>vsx){
-		  //se il motore di destra è maggiore (o semplicemente gira avanti rispetto al sinistro)
-		  //porto il SINISTRO allo stesso valore del DESTRO
-		  velocitaParificata=vdx;
-	  }
-	  esito=muoviMotore(Math.abs(velocitaParificata),direzione,verso);
+  if (velocitaVerso >= 255 || (velocitaVerso + DELTA_VELOCITA >=255)) {
+	 esito=muoviMotore(255,direzione,verso);
+     esito.msg='raggiunta velocita massima';
+	 esito.direzione=direzione;
+	 esito.verso=verso;
   }else{
-	  if (velocitaVerso >= 255 || (velocitaVerso + DELTA_VELOCITA >=255)) {
-		 esito=muoviMotore(255,direzione,verso);
-		 esito.msg='raggiunta velocita massima';
-		 esito.direzione=direzione;
-		 esito.verso=verso;
-	  }else{
-		  velocitaVerso += DELTA_VELOCITA;
-		  esito=muoviMotore(velocitaVerso,direzione,verso);
-	  }	  
+	  velocitaVerso += DELTA_VELOCITA;
+	  esito=muoviMotore(velocitaVerso,direzione,verso);
+	  esito.msg='aumentata la manetta';
   }
-  
-  esito.msg='aumentata la manetta';
   return esito;
 }
 function diminuisciManetta(direzione,verso){
   logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso);
   var esito ={};
   var velocitaVerso;
-  var vdx;
-  var vsx;
   if(verso=='SX'){
-	 velocitaVerso = Math.abs(getVelocitaMotoreSX());
+	 velocitaVerso = getVelocitaMotoreSX(direzione);
   }else if(verso=='DX'){
-	 velocitaVerso =Math.abs(getVelocitaMotoreDX()); 
+	 velocitaVerso =getVelocitaMotoreDX(direzione); 
   }else if(verso=='DRITTO'){
-	vdx = getVelocitaMotoreDX();
-	vsx = getVelocitaMotoreSX();
-	if(vdx==vsx){//se sono ugual velocita
-		velocitaVerso=Math.abs(vdx);
-	}	
+	  velocitaVerso= getMotorePiuVeloce(direzione); 
   }
-  if(verso=='DRITTO' && vdx != vsx){
- 	  //Parifico le due velocita se sono diverse
-	  //portando la piu veloce alla stessa della più
-	  //lenta
- 	  var velocitaParificata;	 
-	  if(vdx<vsx){
-		  //se il motore di destra è minore (o semplicemente gira indietro rispetto al sinistro)
-		  //porto il SINISTRO allo stesso valore del destro
-		  velocitaParificata=vdx;
-	  }else if(vdx>vsx){
-		  //se il motore di destra è maggiore 
-		  //lo portoallo stesso valore del SINISTRO
-		  velocitaParificata=vsx;
-	  }
-	  esito=muoviMotore(Math.abs(velocitaParificata),direzione,verso);
+  
+  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - DELTA_VELOCITA <=VELOCITA_ZERO)) {
+    velocitaVerso=VELOCITA_ZERO;	  	
+    esito=muoviMotore(STOP,direzione,verso);
+    esito.msg='motore fermo';
   }else{
-	  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - DELTA_VELOCITA <=VELOCITA_ZERO)) {
-		velocitaVerso=VELOCITA_ZERO;	  	
-		esito=muoviMotore(STOP,direzione,verso);
-		esito.msg='motore fermo';
-	  }else{
-		  velocitaVerso -= DELTA_VELOCITA;
-		  esito=muoviMotore(velocitaVerso,direzione,verso);
-		  esito.msg='diminuita la manetta';
-	  }	  
+	  velocitaVerso -= DELTA_VELOCITA;
+	  esito=muoviMotore(velocitaVerso,direzione,verso);
+	  esito.msg='diminuita la manetta';
   }
    return esito;	
 }
-/**
-	Restituisce velocita motore SINISTRO
-	valore positivo se sta andando in AVANTI
-	valore negativo se sta andando INDIETRO
-**/
-function getVelocitaMotoreSX(){
-	logger.debug('START getVelocitaMotoreSX'); 
-	var velocitaSxAvanti;
-	var velocitaSxIndietro;
-	var retVal;
-	velocitaSxAvanti=MOTORE_SX_FORWARD.getPwmDutyCycle();
-	velocitaSxIndietro=MOTORE_SX_BACKWARD.getPwmDutyCycle();
-	
-    if( (velocitaSxAvanti==undefined || velocitaSxAvanti<=VELOCITA_ZERO) &&
-		(velocitaSxIndietro==undefined || velocitaSxIndietro<=VELOCITA_ZERO)){
-		//motore sinistro fermo 
-		retVal = VELOCITA_ZERO;
-	}else if(velocitaSxAvanti){
-		retVal = velocitaSxAvanti;
-	}else if(velocitaSxIndietro){
-		retVal = velocitaSxIndietro*-1;//restituisco come valore negativo  se il motore va indietro
+function getVelocitaMotoreSX(direzione){
+	logger.debug('START getVelocitaMotoreSX, direzione = '+direzione); 
+	var velocitaCalcolata;
+	if(direzione=='AVANTI'){
+		velocitaCalcolata=MOTORE_SX_FORWARD.getPwmDutyCycle();
+		if(velocitaCalcolata<=VELOCITA_ZERO){//velocita minima piu bassa il motore non si muove
+			velocitaCalcolata=VELOCITA_ZERO;
+		}
+	}else if (direzione=='INDIETRO'){
+		velocitaCalcolata=MOTORE_SX_BACKWARD.getPwmDutyCycle();
+		if(velocitaCalcolata<=VELOCITA_ZERO){
+			velocitaCalcolata=VELOCITA_ZERO;
+		}
 	}
 	logger.debug('END getVelocitaMotoreSX');
-	return retVal;
+	return velocitaCalcolata;
 }
 
-function getVelocitaMotoreDX(){
-	logger.debug('START getVelocitaMotoreDX'); 
-	var velocitaDxAvanti;
-	var velocitaDxIndietro;
-	var retVal;
-	velocitaDxAvanti=MOTORE_DX_FORWARD.getPwmDutyCycle();
-	velocitaDxIndietro=MOTORE_DX_BACKWARD.getPwmDutyCycle();
-	
-    if( (velocitaDxAvanti==undefined || velocitaDxAvanti<=VELOCITA_ZERO) &&
-		(velocitaDxIndietro==undefined || velocitaDxIndietro<=VELOCITA_ZERO)){
-		//motore destro fermo 
-		retVal = VELOCITA_ZERO;
-	}else if(velocitaDxAvanti){
-		retVal = velocitaDxAvanti;
-	}else if(velocitaDxIndietro){
-		retVal = velocitaDxIndietro*-1;//restituisco come valore negativo  se il motore va indietro
+function getVelocitaMotoreDX(direzione){
+	logger.debug('START getVelocitaMotoreDX, direzione = '+direzione); 
+	var velocitaCalcolata;
+	if(direzione=='AVANTI'){
+		velocitaCalcolata=MOTORE_DX_FORWARD.getPwmDutyCycle();
+		if(velocitaCalcolata<=VELOCITA_ZERO){//velocita minima piu bassa il motore non si muove
+			velocitaCalcolata=VELOCITA_ZERO;
+		}
+	}else if (direzione=='INDIETRO'){
+		velocitaCalcolata=MOTORE_DX_BACKWARD.getPwmDutyCycle();
+		if(velocitaCalcolata<=VELOCITA_ZERO){
+			velocitaCalcolata=VELOCITA_ZERO;
+		}
 	}
 	logger.debug('END getVelocitaMotoreDX'); 
 	return velocitaCalcolata;	
 }
-
+function getMotorePiuVeloce(direzione){
+	logger.debug('START getMotorePiuVeloce, direzione = '+direzione); 
+	var vdx = getVelocitaMotoreDX(direzione);
+	var vsx = getVelocitaMotoreSX(direzione);
+	var velocita = vdx>vsx?vdx:vsx;
+	logger.debug('END getMotorePiuVeloce');
+	return velocita;
+}
 function spegniMotore(){
 	logger.debug('spengo il motore..'); 
 	MOTORE_SX_FORWARD.pwmWrite(STOP); 
@@ -278,38 +228,30 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 	if(direzione=='AVANTI'){
 		if(verso=='SX'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
-			MOTORE_SX_BACKWARD.pwmWrite(STOP);
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();						
 		}else if(verso=='DX'){
-			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 	
-			MOTORE_DX_BACKWARD.pwmWrite(STOP);			
+			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 			
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();						
 		}else if(verso=='DRITTO'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
-			MOTORE_SX_BACKWARD.pwmWrite(STOP);
-			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 		
-			MOTORE_DX_BACKWARD.pwmWrite(STOP);			
+			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 			
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();			
 		}
 	}else if(direzione=='INDIETRO'){
 		if(verso=='SX'){
 			MOTORE_SX_BACKWARD.pwmWrite(velocitaImpostata);
-			MOTORE_SX_FORWARD.pwmWrite(STOP); 
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();					
 		}else if(verso=='DX'){
 			MOTORE_DX_BACKWARD.pwmWrite(velocitaImpostata);
-			MOTORE_DX_FORWARD.pwmWrite(STOP); 
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();					
 		}else if(verso=='DRITTO'){
 			MOTORE_SX_BACKWARD.pwmWrite(velocitaImpostata);
-			MOTORE_SX_FORWARD.pwmWrite(STOP); 
 			MOTORE_DX_BACKWARD.pwmWrite(velocitaImpostata);
-			MOTORE_DX_FORWARD.pwmWrite(STOP); 
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();		
 		}	
