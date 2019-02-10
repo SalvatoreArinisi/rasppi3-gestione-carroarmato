@@ -183,28 +183,19 @@ function azzeraManette(){
 	Gestione eventi della tastiera
 */
 document.addEventListener("keydown", function(event) {
-  /*
-	87 -> w
-	81 -> q
-	69 -> e
-	83 -> s
-	68 -> d
-	65 -> a
-	32 ->barra spaziatrice
-  */
-  if(event.which=='81'){
-	  alzaManettaSX();
-  }else if(event.which=='65'){
-	  abbassaManettaSX();
-  }else if(event.which=='69'){
+  if(event.which==Q){
 	  alzaManettaDX();
-  }else if(event.which=='68'){
+  }else if(event.which==A){
+	  abbassaManettaSX();
+  }else if(event.which==E){
+	  alzaManettaSX();
+  }else if(event.which==D){
 	  abbassaManettaDX();
-  }else if(event.which=='87'){
+  }else if(event.which==W){
 	   alzaEntrambeManette(1);
-  }else if(event.which=='83'){
+  }else if(event.which==S){
 	   abbassaEntrambeManette(1);
-  }else if(event.which=='32'){
+  }else if(event.which==SPAZIO){
 	  azzeraManette();
   }
 });

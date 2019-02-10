@@ -45,8 +45,8 @@ var ultimaDirezioneDX;
 //MOTORE_SX_BACKWARD.pwmFrequency(2000);
 
 var AZIONE_CARRO={};
-var LISTA_AZIONI_CARRO=[];
-
+var LISTA_AZIONI_CARRO=null;
+var REGISTRAZIONE=false;
 // =======================
 // Configurazione LOG4J ============
 // =======================
@@ -68,7 +68,6 @@ app.get('/motore', function (req, res) {
 	var checkDirezione=req.query.direzione=='AVANTI' || req.query.direzione=='INDIETRO';
 	var checkVerso=req.query.verso=='SX' || req.query.verso=='DX'|| req.query.verso=='DRITTO';
 	var checkStep=Number(req.query.step)>=1 || Number(req.query.step)<=5;
-	var registra=req.query.registra=='SI'?true:false;//se passato verranno registrate le azioni sul carro
 	var cambioDirezionePermesso=true;
 	if(checkDirezione && checkVerso && checkStep){
 		if(req.query.verso=='SX'){
@@ -92,12 +91,12 @@ app.get('/motore', function (req, res) {
 	
 	if(cambioDirezionePermesso){
 		if(req.query.manetta=='AUMENTA'){ 
-			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step,registra);
+			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step);
 			esito.codErr='200';	
 			esito.stepImpostato=req.query.step;
 			res.json(esito);
 		}else if(req.query.manetta=='DIMINUISCI'){ 
-			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step,registra);
+			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step);
 			esito.codErr='200';	
 			esito.stepImpostato=req.query.step;
 			res.json(esito);
@@ -137,6 +136,27 @@ app.get('/stopCarro', function (req, res) {
 	}
 	res.json(esito);
 })
+/**
+	Attiva la registrazione
+**/
+app.get('/registra', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+	LISTA_AZIONI_CARRO=[];
+	REGISTRAZIONE=!REGISTRAZIONE;
+	var esito={};
+	esito.registrazione=REGISTRAZIONE;
+	res.json(esito);
+})
+/**
+	Riproduce le azioni registrate
+**/
+app.get('/riproduci', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+	var esito={};
+	esito.messaggio='metodo in costruzione';
+	res.json(esito);
+})
+
 
 app.get('/luci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -162,8 +182,8 @@ app.get('/luci', function (req, res) {
 // ==================================================
 // Implementazione metodi per gestione MOTORE =======
 // ==================================================
-function aumentaManetta(direzione,verso,step,registra){
-  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step+' registra='+registra);
+function aumentaManetta(direzione,verso,step){
+  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -187,18 +207,18 @@ function aumentaManetta(direzione,verso,step,registra){
   }
   if(!spegnimentoForzato){
 	  if (velocitaVerso >= 255 || (velocitaVerso + (DELTA_VELOCITA*step) >=255)) {
-		 esito=muoviMotore(255,direzione,verso,registra);
+		 esito=muoviMotore(255,direzione,verso);
 		 esito.msg='raggiunta velocita massima';
 	  }else{
 		  velocitaVerso += (DELTA_VELOCITA*step);
-		  esito=muoviMotore(velocitaVerso,direzione,verso,registra);
+		  esito=muoviMotore(velocitaVerso,direzione,verso);
 		  esito.msg='aumentata la manetta';
 	  }	  
   }
   return esito;
 }
-function diminuisciManetta(direzione,verso,step,registra){
-  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step+' registra='+registra);
+function diminuisciManetta(direzione,verso,step){
+  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -223,11 +243,11 @@ function diminuisciManetta(direzione,verso,step,registra){
   if(!spegnimentoForzato){
 	  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - (DELTA_VELOCITA*step) <=VELOCITA_ZERO)) {
 		velocitaVerso=VELOCITA_ZERO;	  	
-		esito=muoviMotore(STOP,direzione,verso,registra);
+		esito=muoviMotore(STOP,direzione,verso);
 		esito.msg='motore fermo';
 	  }else{
 		  velocitaVerso -= (DELTA_VELOCITA*step);
-		  esito=muoviMotore(velocitaVerso,direzione,verso,registra);
+		  esito=muoviMotore(velocitaVerso,direzione,verso);
 		  esito.msg='diminuita la manetta';
 	  }	  
   }
@@ -273,6 +293,9 @@ function getVelocitaMotoreDX(direzione){
 **/
 function spegniMotore(verso){
 	logger.debug('spengo il motore..'+verso);
+	if(REGISTRAZIONE){
+		registraAzioniCarro(verso,STOP,null);
+	}
     if(verso=='SX'){
 		MOTORE_SX_FORWARD.pwmWrite(STOP); 
 		MOTORE_SX_BACKWARD.pwmWrite(STOP);
@@ -291,12 +314,12 @@ function spegniMotore(verso){
 	Funzione core 
 	per muovere il motore SX,DX o entrambi
 **/
-function muoviMotore(velocitaImpostata,direzione,verso,registra){
+function muoviMotore(velocitaImpostata,direzione,verso){
 	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
 	logger.debug('..velocitaImpostata '+ velocitaImpostata);
 	var esito ={};
     var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
-	if(registra){
+	if(REGISTRAZIONE){
 		registraAzioniCarro(verso,velocitaImpostata,direzione);
 	}
 	if(direzione=='AVANTI'){
