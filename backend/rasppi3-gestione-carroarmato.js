@@ -1,9 +1,3 @@
-//====Modulo NODEJS Per controllo GPIO 
-//== il modulo che gestisce il PWM (Pulse-width modulation)
-//== E' un wrapper della  pigpio C library(che deve essere installata prima)
-//=== Un limite della  pigpio C library e' che 
-//=== puo' essere usata solo da un singolo processo attivo.
-//== la libreria C e quindi anche il wrapper nodejs richiedono privilegi di root
 const Gpio = require('pigpio').Gpio;
 //====Moduli NODEJS per gestione servizi REST + modulo per loggare su file
 var express = require('express');
@@ -50,6 +44,9 @@ var ultimaDirezioneDX;
 //MOTORE_SX_FORWARD.pwmFrequency(2000);
 //MOTORE_SX_BACKWARD.pwmFrequency(2000);
 
+var AZIONE_CARRO={};
+var LISTA_AZIONI_CARRO=[];
+
 // =======================
 // Configurazione LOG4J ============
 // =======================
@@ -71,6 +68,7 @@ app.get('/motore', function (req, res) {
 	var checkDirezione=req.query.direzione=='AVANTI' || req.query.direzione=='INDIETRO';
 	var checkVerso=req.query.verso=='SX' || req.query.verso=='DX'|| req.query.verso=='DRITTO';
 	var checkStep=Number(req.query.step)>=1 || Number(req.query.step)<=5;
+	var registra=req.query.registra=='SI'?true:false;//se passato verranno registrate le azioni sul carro
 	var cambioDirezionePermesso=true;
 	if(checkDirezione && checkVerso && checkStep){
 		if(req.query.verso=='SX'){
@@ -94,12 +92,12 @@ app.get('/motore', function (req, res) {
 	
 	if(cambioDirezionePermesso){
 		if(req.query.manetta=='AUMENTA'){ 
-			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step);
+			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step,registra);
 			esito.codErr='200';	
 			esito.stepImpostato=req.query.step;
 			res.json(esito);
 		}else if(req.query.manetta=='DIMINUISCI'){ 
-			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step);
+			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step,registra);
 			esito.codErr='200';	
 			esito.stepImpostato=req.query.step;
 			res.json(esito);
@@ -164,8 +162,8 @@ app.get('/luci', function (req, res) {
 // ==================================================
 // Implementazione metodi per gestione MOTORE =======
 // ==================================================
-function aumentaManetta(direzione,verso,step){
-  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
+function aumentaManetta(direzione,verso,step,registra){
+  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step+' registra='+registra);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -189,18 +187,18 @@ function aumentaManetta(direzione,verso,step){
   }
   if(!spegnimentoForzato){
 	  if (velocitaVerso >= 255 || (velocitaVerso + (DELTA_VELOCITA*step) >=255)) {
-		 esito=muoviMotore(255,direzione,verso);
+		 esito=muoviMotore(255,direzione,verso,registra);
 		 esito.msg='raggiunta velocita massima';
 	  }else{
 		  velocitaVerso += (DELTA_VELOCITA*step);
-		  esito=muoviMotore(velocitaVerso,direzione,verso);
+		  esito=muoviMotore(velocitaVerso,direzione,verso,registra);
 		  esito.msg='aumentata la manetta';
 	  }	  
   }
   return esito;
 }
-function diminuisciManetta(direzione,verso,step){
-  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step);
+function diminuisciManetta(direzione,verso,step,registra){
+  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step+' registra='+registra);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -225,11 +223,11 @@ function diminuisciManetta(direzione,verso,step){
   if(!spegnimentoForzato){
 	  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - (DELTA_VELOCITA*step) <=VELOCITA_ZERO)) {
 		velocitaVerso=VELOCITA_ZERO;	  	
-		esito=muoviMotore(STOP,direzione,verso);
+		esito=muoviMotore(STOP,direzione,verso,registra);
 		esito.msg='motore fermo';
 	  }else{
 		  velocitaVerso -= (DELTA_VELOCITA*step);
-		  esito=muoviMotore(velocitaVerso,direzione,verso);
+		  esito=muoviMotore(velocitaVerso,direzione,verso,registra);
 		  esito.msg='diminuita la manetta';
 	  }	  
   }
@@ -293,11 +291,14 @@ function spegniMotore(verso){
 	Funzione core 
 	per muovere il motore SX,DX o entrambi
 **/
-function muoviMotore(velocitaImpostata,direzione,verso){
+function muoviMotore(velocitaImpostata,direzione,verso,registra){
 	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
 	logger.debug('..velocitaImpostata '+ velocitaImpostata);
 	var esito ={};
-  var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
+    var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
+	if(registra){
+		registraAzioniCarro(verso,velocitaImpostata,direzione);
+	}
 	if(direzione=='AVANTI'){
 		if(verso=='SX'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
@@ -338,7 +339,20 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 	logger.debug('muoviMotore END');
 	return esito;
 }
-
+/**
+	Memorizza le azioni del carro armato
+	motore pu? assumere i seguenti valori:
+		SX;
+		DX;
+		DRITTO.
+**/
+function registraAzioniCarro(motore,velocita,direzione){
+	AZIONE_CARRO.motore=motore;
+	AZIONE_CARRO.velocita=velocita;
+	AZIONE_CARRO.direzione=direzione;
+	AZIONE_CARRO.istante=Date.now();
+	LISTA_AZIONI_CARRO.push(AZIONE_CARRO);
+}
 
 function accendiLuci(){
   var esito ={};
@@ -368,7 +382,7 @@ var server = http.createServer(app);
 
 //con questo metodo forzo la chiusura di eventuali eventi (timer, ecc.)
 process.on('SIGINT', function() {
-  logger.debug(' spengo il Trenino Andrea ...');
+  logger.debug(' spengo il Carro ...');
   spegniMotore('DRITTO');
   console.log(' eseguo il process.exit()..');
   process.exit(0);
@@ -377,6 +391,6 @@ process.on('SIGINT', function() {
 server.listen(8080, function () {
   var host = server.address().address;
   var port = server.address().port;
-  logger.debug("TreninoAndrea in ascolto su -> http://%s:%s", host, port)
+  logger.debug("rasppi3-gestione-carroarmato in ascolto su -> http://%s:%s", host, port)
 });
 
