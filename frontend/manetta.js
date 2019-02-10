@@ -179,23 +179,59 @@ function azzeraManette(){
 	manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
 }
 
+/**
+	Avvia registrazione azioni
+**/
+function registra(){
+	registraAzioni().
+	then(
+		function (risposta) 
+		{	
+			labelRegistraAzione('REGISTRA AZIONI '+risposta.registrazione);
+			if (risposta.registrazione=='ON'){
+				labelRegistraAzione.animate().attr({ fill: '#f06' }).loop();
+			}else{
+				labelRegistraAzione.stop();
+			}
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+}
+
+/**
+	Avvia riproduzione azioni
+**/
+function riproduci(){
+	riproduciAzioni().
+	then(
+		function (risposta) 
+		{	
+			mainOutServizioRemotoMotore.text(risposta.messaggio);
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+}
  /*
 	Gestione eventi della tastiera
 */
 document.addEventListener("keydown", function(event) {
-  if(event.which==Q){
+  if(event.key=='q'){
 	  alzaManettaDX();
-  }else if(event.which==A){
+  }else if(event.key=='a'){
 	  abbassaManettaSX();
-  }else if(event.which==E){
+  }else if(event.key=='e'){
 	  alzaManettaSX();
-  }else if(event.which==D){
+  }else if(event.key=='d'){
 	  abbassaManettaDX();
-  }else if(event.which==W){
+  }else if(event.key=='w'){
 	   alzaEntrambeManette(1);
-  }else if(event.which==S){
+  }else if(event.key=='s'){
 	   abbassaEntrambeManette(1);
-  }else if(event.which==SPAZIO){
+  }else if(event.key==' '){
 	  azzeraManette();
+  }else if(event.key=='r'){
+	  registra();
+  }else if(event.key=='p'){
+	  riproduci();
   }
 });

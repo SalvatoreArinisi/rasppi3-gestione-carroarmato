@@ -44,25 +44,6 @@ labelManettaDX.move(255,220).font({size: 10, fill: 'orange', family: 'verdana' }
 
 var labelValoreManettaDX = canvas.text(STEP_DX.toString()).move(320,390).font({size: 20, fill: 'white', family: 'verdana' });
 var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(200,390).font({size: 20, fill: 'white', family: 'verdana' });
-
-
-/*
-	codifica TASTI
-	87 -> w
-	81 -> q
-	69 -> e
-	83 -> s
-	68 -> d
-	65 -> a
-	32 ->barra spaziatrice
-*/
-const W='87';
-const Q='81';
-const E='69';
-const S='83';
-const D='68';
-const A='65';
-const SPAZIO='32';
   
 /**
 	Funzioni core per la gestione delle manette

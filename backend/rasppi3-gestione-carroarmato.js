@@ -144,7 +144,7 @@ app.get('/registra', function (req, res) {
 	LISTA_AZIONI_CARRO=[];
 	REGISTRAZIONE=!REGISTRAZIONE;
 	var esito={};
-	esito.registrazione=REGISTRAZIONE;
+	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
 	res.json(esito);
 })
 /**

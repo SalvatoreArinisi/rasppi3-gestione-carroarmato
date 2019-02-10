@@ -5,7 +5,9 @@ https://svgjs.com
 var canvas = SVG('drawing').size('100%', '100%').viewbox(100, 60,1100,400);
 /* Titolo sopra il cruscotto */
 var titolo = canvas.text('Carro Armato');
-titolo.move(210,60).font({ fill: 'orange', family: 'verdana' });
+titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
+var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
+labelRegistraAzione.move(210,70).font({size: 10, fill: 'red', family: 'verdana' });
 //Input al servizio remoto del motore
 var mainInServizioRemotoMotore= canvas.text('nessuna input ancora inviato al server').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
 //Output del servizio remoto del motore
