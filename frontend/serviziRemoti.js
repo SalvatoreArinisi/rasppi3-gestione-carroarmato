@@ -1,13 +1,13 @@
 //es:
 // http://192.168.1.10:8080/motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
-var urlMotoreCarroArmato = "http://95.234.98.36:8080/motore?";
-var urlStopCarroArmato = "http://95.234.98.36:8080/stopCarro?";
+var urlMotoreCarroArmato = "http://192.168.1.10:8080/motore?";
+var urlStopCarroArmato = "http://192.168.1.10:8080/stopCarro?";
 
 
 
-function setManettaCarro(direzione,statoManetta,verso){
+function setManettaCarro(direzione,statoManetta,verso,step){
 	var response = jQuery.Deferred();
-	var urlDaChiamare=urlMotoreCarroArmato+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso;
+	var urlDaChiamare=urlMotoreCarroArmato+"direzione="+direzione+"&manetta="+statoManetta+"&verso="+verso+"&step="+step;
 	$.ajax({
 		type: "GET",
 		url: urlDaChiamare,

@@ -70,39 +70,46 @@ app.get('/motore', function (req, res) {
     var esito={};
 	var checkDirezione=req.query.direzione=='AVANTI' || req.query.direzione=='INDIETRO';
 	var checkVerso=req.query.verso=='SX' || req.query.verso=='DX'|| req.query.verso=='DRITTO';
+	var checkStep=Number(req.query.step)>=1 || Number(req.query.step)<=5;
 	var cambioDirezionePermesso=true;
-	if(checkDirezione && checkVerso){
+	if(checkDirezione && checkVerso && checkStep){
 		if(req.query.verso=='SX'){
 			if((req.query.direzione=='AVANTI' && ultimaDirezioneSX =='INDIETRO') &&
 			   (req.query.direzione=='INDIETRO' && ultimaDirezioneSX =='AVANTI')
 			){
 				cambioDirezionePermesso=false;	
+			}else{
+				ultimaDirezioneSX=req.query.direzione;
 			}
 		}else if(req.query.verso=='DX'){
 			if((req.query.direzione=='AVANTI' && ultimaDirezioneDX =='INDIETRO') &&
 			   (req.query.direzione=='INDIETRO' && ultimaDirezioneDX =='AVANTI')
 			){
 				cambioDirezionePermesso=false;	
+			}else{
+				ultimaDirezioneDX=req.query.direzione;
 			}
 		}
 	}
 	
 	if(cambioDirezionePermesso){
 		if(req.query.manetta=='AUMENTA'){ 
-			esito = aumentaManetta(req.query.direzione,req.query.verso);
+			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step);
 			esito.codErr='200';	
+			esito.stepImpostato=req.query.step;
 			res.json(esito);
 		}else if(req.query.manetta=='DIMINUISCI'){ 
-			esito = diminuisciManetta(req.query.direzione,req.query.verso);
+			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step);
 			esito.codErr='200';	
+			esito.stepImpostato=req.query.step;
 			res.json(esito);
 		}else{
 			res.json({
 					  esito: 'KO',
 					  codErr: 500,
 					  messaggio: 
-					  'specificare direzione:[AVANTI/INDIETRO] manetta:[AUMENTA/DIMINUISCI] e verso[SX/DX/DRITTO].'+
-					  'esempio: /motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
+					  'specificare direzione:[AVANTI/INDIETRO] manetta:[AUMENTA/DIMINUISCI] verso[SX/DX/DRITTO] e step[1..5].'+
+					  'esempio: /motore?direzione=AVANTI&manetta=AUMENTA&verso=SX&step=1'
 				});
 		}			
 	}else{
@@ -157,8 +164,8 @@ app.get('/luci', function (req, res) {
 // ==================================================
 // Implementazione metodi per gestione MOTORE =======
 // ==================================================
-function aumentaManetta(direzione,verso){
-  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso);
+function aumentaManetta(direzione,verso,step){
+  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -181,19 +188,19 @@ function aumentaManetta(direzione,verso){
 	  }
   }
   if(!spegnimentoForzato){
-	  if (velocitaVerso >= 255 || (velocitaVerso + DELTA_VELOCITA >=255)) {
+	  if (velocitaVerso >= 255 || (velocitaVerso + (DELTA_VELOCITA*step) >=255)) {
 		 esito=muoviMotore(255,direzione,verso);
 		 esito.msg='raggiunta velocita massima';
 	  }else{
-		  velocitaVerso += DELTA_VELOCITA;
+		  velocitaVerso += (DELTA_VELOCITA*step);
 		  esito=muoviMotore(velocitaVerso,direzione,verso);
 		  esito.msg='aumentata la manetta';
 	  }	  
   }
   return esito;
 }
-function diminuisciManetta(direzione,verso){
-  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso);
+function diminuisciManetta(direzione,verso,step){
+  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -216,12 +223,12 @@ function diminuisciManetta(direzione,verso){
 	  }
   }
   if(!spegnimentoForzato){
-	  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - DELTA_VELOCITA <=VELOCITA_ZERO)) {
+	  if (velocitaVerso == VELOCITA_ZERO || (velocitaVerso - (DELTA_VELOCITA*step) <=VELOCITA_ZERO)) {
 		velocitaVerso=VELOCITA_ZERO;	  	
 		esito=muoviMotore(STOP,direzione,verso);
 		esito.msg='motore fermo';
 	  }else{
-		  velocitaVerso -= DELTA_VELOCITA;
+		  velocitaVerso -= (DELTA_VELOCITA*step);
 		  esito=muoviMotore(velocitaVerso,direzione,verso);
 		  esito.msg='diminuita la manetta';
 	  }	  
@@ -263,7 +270,9 @@ function getVelocitaMotoreDX(direzione){
 	logger.debug('END getVelocitaMotoreDX'); 
 	return velocitaCalcolata;	
 }
-
+/**
+	Spegne il motore SX,DX oppure Entrambi
+**/
 function spegniMotore(verso){
 	logger.debug('spengo il motore..'+verso);
     if(verso=='SX'){
@@ -280,16 +289,21 @@ function spegniMotore(verso){
 	}	
 	logger.debug('spento.');
 }
+/**
+	Funzione core 
+	per muovere il motore SX,DX o entrambi
+**/
 function muoviMotore(velocitaImpostata,direzione,verso){
 	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
 	logger.debug('..velocitaImpostata '+ velocitaImpostata);
 	var esito ={};
-  var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX;
+  var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
 	if(direzione=='AVANTI'){
 		if(verso=='SX'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
-			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();						
+			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();	
+			direzioneSX=direzione;
 		}else if(verso=='DX'){
 			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 			
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
@@ -319,11 +333,8 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 	esito.stepManetta=DELTA_VELOCITA;
 	esito.velocitaFisicaMotoreSX=velocitaFisicaImpostataSX;
 	esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;	  
-	//pwmCalcolato rappresenta il PWM - il PWM minimo o VELOCITA_ZERO (es: pwm 70->pwmCalcolato = 70-55 = 15)
-	esito.pwmCalcolatoSX=velocitaFisicaImpostataSX-VELOCITA_ZERO;
-	esito.pwmCalcolatoDX=velocitaFisicaImpostataDX-VELOCITA_ZERO;	
-	esito.direzione = direzione;
-	esito.verso = verso;
+	esito.direzioneMotoreSX = ultimaDirezioneSX;
+	esito.direzioneMotoreDX = ultimaDirezioneDX;
 	logger.debug('muoviMotore END');
 	return esito;
 }
