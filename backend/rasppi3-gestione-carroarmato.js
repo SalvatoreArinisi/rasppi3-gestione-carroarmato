@@ -179,6 +179,8 @@ app.get('/riproduci', function (req, res) {
 		esito.messaggio='riproduzione già avviata';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 	}else{
+		//ordino array 
+		LISTA_AZIONI_CARRO.sort(function(a, b) {return a.fine - b.fine;});
 		esito.messaggio='avviata riproduzione in backgroud';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 		esegueAzioni();		

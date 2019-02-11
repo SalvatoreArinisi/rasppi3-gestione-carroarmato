@@ -72,7 +72,16 @@ function riproduci(){
 	then(
 		function (risposta) 
 		{	
-			mainOutServizioRemotoMotore.text(risposta.messaggio);
+			var msg ='';
+			var listaAzioni=risposta.listaAzioni;
+			 for(var x = 0; x < listaAzioni.length;x++){
+				 msg = msg + 'motore '+listaAzioni[x].motore+' velocita '+
+						  listaAzioni[x].velocita+' '+listaAzioni[x].direzione+
+						  ' inizio '+listaAzioni[x].inizio+' fine '+
+						  listaAzioni[x].fine+' sec='+((listaAzioni[x].fine-listaAzioni[x].inizio)/1000)+'\n';
+				
+			}
+			mainOutServizioRemotoMotore.text(msg);
 		}, function (error) {
 			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 		});	
