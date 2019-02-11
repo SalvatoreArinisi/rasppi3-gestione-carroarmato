@@ -4,7 +4,7 @@ https://svgjs.com
 //Area di disegno SVG
 var canvas = SVG('drawing').viewbox(0, 0,1000,500);
 /* Titolo sopra il cruscotto */
-var titolo = canvas.text('Carro Armato');
+var titolo = canvas.text('Carro Armato- BI MAZZU A TUTTI BASTADDI');
 titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
 var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
 labelRegistraAzione.move(210,70).font({size: 8, fill: 'red', family: 'verdana' });

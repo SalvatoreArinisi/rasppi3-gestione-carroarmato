@@ -1,6 +1,6 @@
 //es:
 // http://192.168.1.10:8080/motore?direzione=AVANTI&manetta=AUMENTA&verso=SX'
-var indirizzoIP="localhost";
+var indirizzoIP="192.168.1.10";
 var urlMotoreCarroArmato = "http://"+indirizzoIP+":8080/motore?";
 var urlStopCarroArmato = "http://"+indirizzoIP+":8080/stopCarro?";
 var urlRegistra = "http://"+indirizzoIP+":8080/registra";
