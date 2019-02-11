@@ -47,6 +47,7 @@ var ultimaDirezioneDX;
 
 var LISTA_AZIONI_CARRO=null;
 var REGISTRAZIONE=false;
+var RIPRODUZIONE=false;
 var TIMER_REGISTRAZIONE=null;//è il timer che lancia la funzione di Riproduzione Azioni
 // =======================
 // Configurazione LOG4J ============
@@ -155,14 +156,16 @@ app.get('/registra', function (req, res) {
 	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
 	res.json(esito);	
 })
+
 app.get('/cancellaRegistrazione', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
-	LISTA_AZIONI_CARRO=[];
 	if(TIMER_REGISTRAZIONE){
 		clearTimeout(TIMER_REGISTRAZIONE);
 	}
+	LISTA_AZIONI_CARRO=null;
+	REGISTRAZIONE=false;
 	var esito={};
-	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
+	esito.registrazione='OFF';
 	esito.messaggio='registrazione cancellata';
 	res.json(esito);
 })
@@ -172,9 +175,14 @@ app.get('/cancellaRegistrazione', function (req, res) {
 app.get('/riproduci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	var esito={};
-	esito.messaggio='avviata riproduzione in backgroud';
-	esito.listaAzioni=LISTA_AZIONI_CARRO;
-	esegueAzioni();
+	if(RIPRODUZIONE){
+		esito.messaggio='riproduzione già avviata';
+		esito.listaAzioni=LISTA_AZIONI_CARRO;
+	}else{
+		esito.messaggio='avviata riproduzione in backgroud';
+		esito.listaAzioni=LISTA_AZIONI_CARRO;
+		esegueAzioni();		
+	}
 	res.json(esito);
 })
 
@@ -391,15 +399,17 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 		DRITTO.
 **/
 function registraAzioniCarro(motore,velocita,direzione){
-	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
-		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
-	}
-	var azioneCarro={};
-	azioneCarro.motore=motore;
-	azioneCarro.velocita=velocita;
-	azioneCarro.direzione=direzione;
-	azioneCarro.inizio=Date.now();
-	LISTA_AZIONI_CARRO.push(azioneCarro);
+	if(LISTA_AZIONI_CARRO){
+		if(LISTA_AZIONI_CARRO.length>0){
+			LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
+		}		
+		var azioneCarro={};
+		azioneCarro.motore=motore;
+		azioneCarro.velocita=velocita;
+		azioneCarro.direzione=direzione;
+		azioneCarro.inizio=Date.now();
+		LISTA_AZIONI_CARRO.push(azioneCarro);		
+	{
 }
 
 /**
@@ -417,20 +427,19 @@ function popAzione(){
 function esegueAzioni() {
   var esito ={};
   if(!REGISTRAZIONE){
-	  var azioneCorrente = popAzione();
-	  if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
-		//sto chiedendo di fermare il carro
-		spegniMotore('DRITTO');
+	var azioneCorrente = popAzione();
+	if(azioneCorrente){
+		if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
+			//sto chiedendo di fermare il carro
+			spegniMotore('DRITTO');
+		}else{
+		    muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
+		}
 		clearTimeout(TIMER_REGISTRAZIONE);
-	  }else if(azioneCorrente){
-		  muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
-		  clearTimeout(TIMER_REGISTRAZIONE);
-		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  
-	  }else{
-		logger.debug("Azioni terminate "+Date.now());  
-	  }
-  }else{
-		logger.debug("stoppa prima la registrazione!");
+		if (!azioneCorrente.ultimaAzione){//esegue la prossima azione tra N millisecondi
+		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
+		}		
+	}	
   }
 }
 

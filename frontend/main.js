@@ -2,16 +2,20 @@
 https://svgjs.com
  */
 //Area di disegno SVG
-var canvas = SVG('drawing').size('100%', '100%').viewbox(100, 60,1100,400);
+var canvas = SVG('drawing').viewbox(0, 0,1000,500);
 /* Titolo sopra il cruscotto */
 var titolo = canvas.text('Carro Armato');
 titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
 var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
 labelRegistraAzione.move(210,70).font({size: 10, fill: 'red', family: 'verdana' });
+
+var labelHelp=canvas.text('tasto R: avvia/stoppa registra azioni\n tasto P: riproduci registrazione\n tasto K: elimina registrazioni');
+labelHelp.move(0,5).font({size: 10, fill: 'white', family: 'verdana' });
+
 //Input al servizio remoto del motore
-var mainInServizioRemotoMotore= canvas.text('nessuna input ancora inviato al server').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
+var mainInServizioRemotoMotore= canvas.text('').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
 //Output del servizio remoto del motore
-var mainOutServizioRemotoMotore= canvas.text('nessuna risposta dal server ancora').move(420,140).font({size: 10, fill: 'white', family: 'verdana' });
+var mainOutServizioRemotoMotore= canvas.text('').move(420,140).font({size: 10, fill: 'white', family: 'verdana' });
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
 	mainInServizioRemotoMotore.text(direzione+"-"+statoManetta+"-"+verso);
@@ -31,3 +35,81 @@ function stampaDatiOutServizioMotore(risposta){
 			risposta.msg;
 	mainOutServizioRemotoMotore.text(msg);
 }
+
+/**
+	Avvia registrazione azioni
+**/
+function registra(){
+	registraAzioni().
+	then(
+		function (risposta) 
+		{	
+			labelRegistraAzione.text('REGISTRA AZIONI '+risposta.registrazione);
+			if (risposta.registrazione=='ON'){
+				labelRegistraAzione.animate().attr({ fill: '#f06' }).loop();
+			}else{
+				labelRegistraAzione.stop();
+				labelRegistraAzione.attr({ fill: 'red' })
+			}
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+}
+
+/**
+	Avvia riproduzione azioni
+**/
+function riproduci(){
+	riproduciAzioni().
+	then(
+		function (risposta) 
+		{	
+			mainOutServizioRemotoMotore.text(risposta.messaggio);
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+}
+
+/**
+ Canella registrazione di azioni
+**/
+function cancellaRegistrazione(){
+	cancellaAzioni().
+	then(
+		function (risposta) 
+		{	
+			mainOutServizioRemotoMotore.text(risposta.messaggio);
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+	
+}
+
+ /*
+	Gestione eventi della tastiera
+*/
+document.addEventListener("keydown", function(event) {
+  if(event.key=='q'){
+	  alzaManettaDX();
+  }else if(event.key=='a'){
+	  abbassaManettaSX();
+  }else if(event.key=='e'){
+	  alzaManettaSX();
+  }else if(event.key=='d'){
+	  abbassaManettaDX();
+  }else if(event.key=='w'){
+	   alzaEntrambeManette(1);
+  }else if(event.key=='s'){
+	   abbassaEntrambeManette(1);
+  }else if(event.key==' '){
+	  azzeraManette();
+  }else if(event.key=='r'){
+	  registra();
+  }else if(event.key=='p'){
+	  riproduci();
+  }else if(event.key=='k'){
+	  cancellaRegistrazione();
+  }else if(event.key=='F1'){
+	  cancellaRegistrazione();
+  }
+});
