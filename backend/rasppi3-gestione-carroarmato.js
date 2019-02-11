@@ -146,11 +146,14 @@ app.get('/registra', function (req, res) {
 		//se era attiva chiudo l'ultima azione
 		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
 		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].ultimaAzione=true;
+	}else if(!REGISTRAZIONE){
+		//creo l'array
+		LISTA_AZIONI_CARRO=[];
 	}
 	REGISTRAZIONE=!REGISTRAZIONE;
 	var esito={};
 	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
-	res.json(esito);
+	res.json(esito);	
 })
 app.get('/cancellaRegistrazione', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -169,7 +172,8 @@ app.get('/cancellaRegistrazione', function (req, res) {
 app.get('/riproduci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	var esito={};
-	esito.messaggio='avviata riproduzione';
+	esito.messaggio='avviata riproduzione in backgroud';
+	esito.listaAzioni=LISTA_AZIONI_CARRO;
 	esegueAzioni();
 	res.json(esito);
 })

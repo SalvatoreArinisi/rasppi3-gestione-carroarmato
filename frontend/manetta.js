@@ -187,11 +187,12 @@ function registra(){
 	then(
 		function (risposta) 
 		{	
-			labelRegistraAzione('REGISTRA AZIONI '+risposta.registrazione);
+			labelRegistraAzione.text('REGISTRA AZIONI '+risposta.registrazione);
 			if (risposta.registrazione=='ON'){
 				labelRegistraAzione.animate().attr({ fill: '#f06' }).loop();
 			}else{
 				labelRegistraAzione.stop();
+				labelRegistraAzione.attr({ fill: 'red' })
 			}
 		}, function (error) {
 			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
