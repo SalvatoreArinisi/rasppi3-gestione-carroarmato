@@ -47,6 +47,7 @@ var ultimaDirezioneDX;
 
 var LISTA_AZIONI_CARRO=null;
 var REGISTRAZIONE=false;
+var TIMER_REGISTRAZIONE=null;//è il timer che lancia la funzione di Riproduzione Azioni
 // =======================
 // Configurazione LOG4J ============
 // =======================
@@ -144,6 +145,7 @@ app.get('/registra', function (req, res) {
 	if(REGISTRAZIONE && LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
 		//se era attiva chiudo l'ultima azione
 		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
+		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].ultimaAzione=true;
 	}
 	REGISTRAZIONE=!REGISTRAZIONE;
 	var esito={};
@@ -153,6 +155,9 @@ app.get('/registra', function (req, res) {
 app.get('/cancellaRegistrazione', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	LISTA_AZIONI_CARRO=[];
+	if(TIMER_REGISTRAZIONE){
+		clearTimeout(TIMER_REGISTRAZIONE);
+	}
 	var esito={};
 	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
 	esito.messaggio='registrazione cancellata';
@@ -164,7 +169,8 @@ app.get('/cancellaRegistrazione', function (req, res) {
 app.get('/riproduci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	var esito={};
-	esito.messaggio='metodo in costruzione';
+	esito.messaggio='avviata riproduzione';
+	esegueAzioni();
 	res.json(esito);
 })
 
@@ -323,7 +329,7 @@ function spegniMotore(verso){
 }
 /**
 	Funzione core 
-	per muovere il motore SX,DX o entrambi
+	per muovere il motore SX,DX o DRITTO
 **/
 function muoviMotore(velocitaImpostata,direzione,verso){
 	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
@@ -391,6 +397,39 @@ function registraAzioniCarro(motore,velocita,direzione){
 	azioneCarro.inizio=Date.now();
 	LISTA_AZIONI_CARRO.push(azioneCarro);
 }
+
+/**
+	Preleva la prima azione dalla lista
+	contestualmente viene eliminata dalla lista
+**/
+function popAzione(){
+	var azione=null;
+	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
+		azione = LISTA_AZIONI_CARRO.shift();
+	}
+	return azione;
+}
+
+function esegueAzioni() {
+  var esito ={};
+  if(!REGISTRAZIONE){
+	  var azioneCorrente = popAzione();
+	  if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
+		//sto chiedendo di fermare il carro
+		spegniMotore('DRITTO');
+		clearTimeout(TIMER_REGISTRAZIONE);
+	  }else if(azioneCorrente){
+		  muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
+		  clearTimeout(TIMER_REGISTRAZIONE);
+		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  
+	  }else{
+		logger.debug("Azioni terminate "+Date.now());  
+	  }
+  }else{
+		logger.debug("stoppa prima la registrazione!");
+  }
+}
+
 
 function accendiLuci(){
   var esito ={};

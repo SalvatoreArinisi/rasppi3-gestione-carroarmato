@@ -4,6 +4,7 @@ var urlMotoreCarroArmato = "http://192.168.1.10:8080/motore?";
 var urlStopCarroArmato = "http://192.168.1.10:8080/stopCarro?";
 var urlRegistra = "http://192.168.1.10:8080/registra";
 var urlRiproduci = "http://192.168.1.10:8080/riproduci";
+var urlCancellaRegistrazione = "http://192.168.1.10:8080/cancellaRegistrazione";
 
 /**
 	Imposta manetta del Carro
@@ -73,6 +74,24 @@ function riproduciAzioni(){
 	$.ajax({
 		type: "GET",
 		url: urlRiproduci,
+		success: function(risposta) {
+			response.resolve(risposta);
+		},
+		error: function(e) {
+			 response.reject(e);
+		}
+	});
+	return response.promise();
+}
+
+/**
+	Cancella  azioni registrate
+**/
+function cancellaAzioni(){
+	var response = jQuery.Deferred();
+	$.ajax({
+		type: "GET",
+		url: urlCancellaRegistrazione,
 		success: function(risposta) {
 			response.resolve(risposta);
 		},

@@ -211,6 +211,22 @@ function riproduci(){
 			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
 		});	
 }
+
+/**
+ Canella registrazione di azioni
+**/
+function cancellaRegistrazione(){
+	cancellaAzioni().
+	then(
+		function (risposta) 
+		{	
+			mainOutServizioRemotoMotore.text(risposta.messaggio);
+		}, function (error) {
+			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
+		});	
+	
+}
+
  /*
 	Gestione eventi della tastiera
 */
@@ -233,5 +249,7 @@ document.addEventListener("keydown", function(event) {
 	  registra();
   }else if(event.key=='p'){
 	  riproduci();
+  }else if(event.key=='k'){
+	  cancellaRegistrazione();
   }
 });
