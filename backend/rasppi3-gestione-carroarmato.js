@@ -44,7 +44,7 @@ var ultimaDirezioneDX;
 //MOTORE_SX_FORWARD.pwmFrequency(2000);
 //MOTORE_SX_BACKWARD.pwmFrequency(2000);
 
-var AZIONE_CARRO={};
+
 var LISTA_AZIONI_CARRO=null;
 var REGISTRAZIONE=false;
 // =======================
@@ -141,10 +141,21 @@ app.get('/stopCarro', function (req, res) {
 **/
 app.get('/registra', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
-	LISTA_AZIONI_CARRO=[];
+	if(REGISTRAZIONE && LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
+		//se era attiva chiudo l'ultima azione
+		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
+	}
 	REGISTRAZIONE=!REGISTRAZIONE;
 	var esito={};
 	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
+	res.json(esito);
+})
+app.get('/cancellaRegistrazione', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+	LISTA_AZIONI_CARRO=[];
+	var esito={};
+	esito.registrazione=REGISTRAZIONE?'ON':'OFF';
+	esito.messaggio='registrazione cancellata';
 	res.json(esito);
 })
 /**
@@ -370,11 +381,15 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 		DRITTO.
 **/
 function registraAzioniCarro(motore,velocita,direzione){
-	AZIONE_CARRO.motore=motore;
-	AZIONE_CARRO.velocita=velocita;
-	AZIONE_CARRO.direzione=direzione;
-	AZIONE_CARRO.istante=Date.now();
-	LISTA_AZIONI_CARRO.push(AZIONE_CARRO);
+	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
+		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
+	}
+	var azioneCarro={};
+	azioneCarro.motore=motore;
+	azioneCarro.velocita=velocita;
+	azioneCarro.direzione=direzione;
+	azioneCarro.inizio=Date.now();
+	LISTA_AZIONI_CARRO.push(azioneCarro);
 }
 
 function accendiLuci(){
