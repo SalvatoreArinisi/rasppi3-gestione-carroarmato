@@ -17,12 +17,13 @@ rHelp.move(0,200).font({size: 10, fill: 'white', family: 'verdana' });
 pHelp.move(0,220).font({size: 10, fill: 'white', family: 'verdana' });
 kHelp.move(0,240).font({size: 10, fill: 'white', family: 'verdana' });
 
+var image = canvas.image('pierino.png', 300, 400).move(500,0);
 
 
 //Input al servizio remoto del motore
-var mainInServizioRemotoMotore= canvas.text('').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
+var mainInServizioRemotoMotore= canvas.text('').move(420,90).font({size: 10, fill: 'white', family: 'verdana' });
 //Output del servizio remoto del motore
-var mainOutServizioRemotoMotore= canvas.text('').move(420,140).font({size: 10, fill: 'white', family: 'verdana' });
+var mainOutServizioRemotoMotore= canvas.text('').move(420,300).font({size: 10, fill: 'white', family: 'verdana' });
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
 	mainInServizioRemotoMotore.text(direzione+"-"+statoManetta+"-"+verso);
