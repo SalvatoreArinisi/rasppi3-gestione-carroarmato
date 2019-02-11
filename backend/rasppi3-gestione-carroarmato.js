@@ -409,7 +409,7 @@ function registraAzioniCarro(motore,velocita,direzione){
 		azioneCarro.direzione=direzione;
 		azioneCarro.inizio=Date.now();
 		LISTA_AZIONI_CARRO.push(azioneCarro);		
-	{
+	}
 }
 
 /**
