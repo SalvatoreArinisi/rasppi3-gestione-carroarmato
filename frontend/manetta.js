@@ -7,7 +7,7 @@ function alzaManettaSX(){
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
 		STEP_SX++;
 		stampaValorePosizioneManettaSX();
-		manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
+		manopolaSX.animate(200, '<>').move(210,ULTIMA_POS_MANETTA_SX);
 		var direzione;
 		var statoManettaSX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_SX,'SX')){//se non ho ancora raggiunto lo zero
@@ -32,7 +32,7 @@ function abbassaManettaSX(){
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
 		STEP_SX--;
 		stampaValorePosizioneManettaSX();
-		manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
+		manopolaSX.animate(200, '<>').move(210,ULTIMA_POS_MANETTA_SX);
 		var direzione;
 		var statoManettaSX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_SX,'SX')){//se non ho ancora raggiunto lo zero
@@ -57,7 +57,7 @@ function alzaManettaDX(){
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
 		STEP_DX++;
 		stampaValorePosizioneManettaDX();
-		manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 		var direzione;
 		var statoManettaDX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_DX,'DX')){//se non ho ancora raggiunto lo zero
@@ -82,7 +82,7 @@ function abbassaManettaDX(){
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+deltaVariazioneManetta;
 		STEP_DX--;
 		stampaValorePosizioneManettaDX();
-		manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 		var direzione;
 		var statoManettaDX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_DX,'DX')){//se non ho ancora raggiunto lo zero
@@ -117,8 +117,8 @@ function alzaEntrambeManette(step){
 		STEP_SX = STEP_SX+stepCalcolato;
 		stampaValorePosizioneManettaDX();
 		stampaValorePosizioneManettaSX();
-		manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
-		manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+		manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
+		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 		var direzione;
 		var statoManetta;			
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_DX,'DRITTO')){//se non ho ancora raggiunto lo zero (la manetta a sinistra è uguale)
@@ -150,8 +150,8 @@ function abbassaEntrambeManette(step){
 	   STEP_SX=STEP_SX-stepCalcolato;
 	   stampaValorePosizioneManettaDX();
 	   stampaValorePosizioneManettaSX();
-	   manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
-	   manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+	   manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
+	   manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 	   var direzione='AVANTI';
 	   var statoManetta='AUMENTA';		
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_DX,'DRITTO')){//se non ho ancora raggiunto lo zero (la manetta a sinistra è uguale)
@@ -175,8 +175,8 @@ function azzeraManette(){
 	stampaValorePosizioneManettaSX();
 	ULTIMA_POS_MANETTA_SX = 215;
 	ULTIMA_POS_MANETTA_DX = 215;
-	manopolaSX.animate(200, '<>').move(190,ULTIMA_POS_MANETTA_SX);
-	manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
+	manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
+	manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 }
 
 

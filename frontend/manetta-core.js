@@ -3,15 +3,15 @@
 */
 
 //alloggio manetta SX
-canvas.rect(40,220).move(185, 120).fill('black').stroke({width:2, color:'orange'});
-canvas.rect(20,200).move(195, 130).fill('black').stroke({width:1, color:'orange'});
+canvas.rect(40,220).move(195, 120).fill('black').stroke({width:2, color:'orange'});
+canvas.rect(20,200).move(205, 130).fill('black').stroke({width:1, color:'orange'});
 //linea dello ZERO SX
-canvas.rect(50,1).move(180, 230).fill('red').stroke({width:1, color:'red'});
+canvas.rect(50,1).move(190, 230).fill('red').stroke({width:1, color:'red'});
 //alloggio manetta DX
-canvas.rect(40,220).move(305, 120).fill('black').stroke({width:2, color:'orange'});
-canvas.rect(20,200).move(315, 130).fill('black').stroke({width:1, color:'orange'});
+canvas.rect(40,220).move(315, 120).fill('black').stroke({width:2, color:'orange'});
+canvas.rect(20,200).move(325, 130).fill('black').stroke({width:1, color:'orange'});
 //linea dello ZERO DX
-canvas.rect(50,1).move(300, 230).fill('red').stroke({width:1, color:'red'});
+canvas.rect(50,1).move(310, 230).fill('red').stroke({width:1, color:'red'});
 //memorizzo Posizione manetta SX
 var ULTIMA_POS_MANETTA_SX=215;//215 è al centro manetta. Corrisponde allo ZERO
 //memorizzo Posizione manetta DX
@@ -23,27 +23,27 @@ var STEP_DX=0;
 var lockManettaSX=false;
 var lockManettaDX=false;
 //manopole SX e DX
-var manopolaSX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(190, ULTIMA_POS_MANETTA_SX);
-var manopolaDX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(310, ULTIMA_POS_MANETTA_DX);
+var manopolaSX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(200, ULTIMA_POS_MANETTA_SX);
+var manopolaDX=canvas.circle(30).fill('orange').stroke({width:3, color: 'blue',opacity: 1}).move(320, ULTIMA_POS_MANETTA_DX);
 
 var labelAvantiSX = canvas.text('A');
-labelAvantiSX.move(200,95).font({size: 20, fill: 'green', family: 'verdana' });
+labelAvantiSX.move(210,95).font({size: 20, fill: 'green', family: 'verdana' });
 var labelIndietroSX = canvas.text('R');
-labelIndietroSX.move(200,350).font({size: 20, fill: 'red', family: 'verdana' });
+labelIndietroSX.move(210,350).font({size: 20, fill: 'red', family: 'verdana' });
 
 var labelAvantiDX = canvas.text('A');
-labelAvantiDX.move(320,95).font({size: 20, fill: 'green', family: 'verdana' });
+labelAvantiDX.move(330,95).font({size: 20, fill: 'green', family: 'verdana' });
 var labelIndietroDX = canvas.text('R');
-labelIndietroDX.move(320,350).font({size: 20, fill: 'red', family: 'verdana' });
+labelIndietroDX.move(330,350).font({size: 20, fill: 'red', family: 'verdana' });
 
 
 var labelManettaSX = canvas.text('Manetta SX');
-labelManettaSX.move(135,220).font({size: 10, fill: 'orange', family: 'verdana' }).rotate(-90);
+labelManettaSX.move(145,220).font({size: 10, fill: 'orange', family: 'verdana' }).rotate(-90);
 var labelManettaDX = canvas.text('Manetta DX');
-labelManettaDX.move(255,220).font({size: 10, fill: 'orange', family: 'verdana' }).rotate(-90);
+labelManettaDX.move(265,220).font({size: 10, fill: 'orange', family: 'verdana' }).rotate(-90);
 
-var labelValoreManettaDX = canvas.text(STEP_DX.toString()).move(320,390).font({size: 20, fill: 'white', family: 'verdana' });
-var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(200,390).font({size: 20, fill: 'white', family: 'verdana' });
+var labelValoreManettaDX = canvas.text(STEP_DX.toString()).move(330,390).font({size: 20, fill: 'white', family: 'verdana' });
+var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(210,390).font({size: 20, fill: 'white', family: 'verdana' });
   
 /**
 	Funzioni core per la gestione delle manette

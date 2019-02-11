@@ -7,10 +7,17 @@ var canvas = SVG('drawing').viewbox(0, 0,1000,500);
 var titolo = canvas.text('Carro Armato');
 titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
 var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
-labelRegistraAzione.move(210,70).font({size: 10, fill: 'red', family: 'verdana' });
+labelRegistraAzione.move(210,70).font({size: 8, fill: 'red', family: 'verdana' });
 
-var labelHelp=canvas.text('tasto R: avvia/stoppa registra azioni\n tasto P: riproduci registrazione\n tasto K: elimina registrazioni');
-labelHelp.move(0,5).font({size: 10, fill: 'white', family: 'verdana' });
+var rHelp=canvas.text('R: avvia/stoppa registra azioni');
+var pHelp=canvas.text('P: riproduci registrazione');
+var kHelp=canvas.text('K: elimina registrazioni');
+
+rHelp.move(0,200).font({size: 10, fill: 'white', family: 'verdana' });
+pHelp.move(0,220).font({size: 10, fill: 'white', family: 'verdana' });
+kHelp.move(0,240).font({size: 10, fill: 'white', family: 'verdana' });
+
+
 
 //Input al servizio remoto del motore
 var mainInServizioRemotoMotore= canvas.text('').move(420,100).font({size: 10, fill: 'white', family: 'verdana' });
