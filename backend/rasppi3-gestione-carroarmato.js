@@ -481,6 +481,5 @@ process.on('SIGINT', function() {
 server.listen(8080, function () {
   var host = server.address().address;
   var port = server.address().port;
-  logger.debug("rasppi3-gestione-carroarmato in ascolto su -> http://%s:%s", host, port)
+  logger.debug("rasppi3-gestione-carroarmato in ascolto su -> http://%s:%s", host, port);
 });
-
