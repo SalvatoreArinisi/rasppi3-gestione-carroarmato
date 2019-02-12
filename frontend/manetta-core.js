@@ -51,7 +51,6 @@ var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(210,390).font({s
 
 //Blocca/Sblocca una determinata manetta
 function toggleLockManetta(manetta){
-	return;
 	var colore='gray';
 	if(manetta=='SX'){
 	  lockManettaSX=!lockManettaSX;
@@ -115,7 +114,7 @@ function raggiuntoLoZero(posizioneManopola,verso){
 	if(posizioneManopola==215){//sono a meta quindi ZERO
 		stopCarro(verso);
 		toggleLockManetta(verso);
-		stampaDatiInputServizioMotore('STOP','','');
+		stampaDatiInputServizioMotore('studu i muturi','','');
 		retVal=true;
 	}	
 	return retVal;

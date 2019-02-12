@@ -107,7 +107,7 @@ app.get('/motore', function (req, res) {
 					  esito: 'KO',
 					  codErr: 500,
 					  messaggio: 
-					  'specificare direzione:[AVANTI/INDIETRO] manetta:[AUMENTA/DIMINUISCI] verso[SX/DX/DRITTO] e step[1..5].'+
+					  'specifica direzione piffauri :[AVANTI/INDIETRO] manetta:[AUMENTA/DIMINUISCI] verso[SX/DX/DRITTO] e step[1..5].'+
 					  'esempio: /motore?direzione=AVANTI&manetta=AUMENTA&verso=SX&step=1'
 				});
 		}			
@@ -117,7 +117,7 @@ app.get('/motore', function (req, res) {
 			  esito: 'KO',
 			  codErr: 500,
 			  messaggio: 
-			  'Prima di invertire senso di marcia azzerare il motore'
+			  'Prima di i canciari senso di marcia azzerare il motore'
 		});		
 	}
 })
@@ -133,7 +133,7 @@ app.get('/stopCarro', function (req, res) {
 	  esito.codErr='200';	
 	}else{
 		esito.codErr='500';
-		esito.messaggio='specificare verso SX o DX'+
+		esito.messaggio='specifica quali muturi: SX o DX'+
 		 'esempio: /stopCarro?verso=SX';
 	}
 	res.json(esito);
@@ -166,7 +166,7 @@ app.get('/cancellaRegistrazione', function (req, res) {
 	REGISTRAZIONE=false;
 	var esito={};
 	esito.registrazione='OFF';
-	esito.messaggio='registrazione cancellata';
+	esito.messaggio='registrazione cancellata tranquillo fidati. Puoi ripartire';
 	res.json(esito);
 })
 /**
@@ -176,11 +176,11 @@ app.get('/riproduci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	var esito={};
 	if(RIPRODUZIONE){
-		esito.messaggio='riproduzione già avviata';
+		esito.messaggio='stava gia registrannu moviti!';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 	}else{
 		
-		esito.messaggio='avviata riproduzione in backgroud';
+		esito.messaggio='staiu registrannu moviti!';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 		esegueAzioni();		
 	}
@@ -204,7 +204,7 @@ app.get('/luci', function (req, res) {
 				  esito: 'KO',
 				  codErr: 500,
 				  messaggio: 
-				  'specificare stato: [ACCESE/SPENTE].'+
+				  'specifica u stato piffauri : [ACCESE/SPENTE].'+
           'esempio: /luci?stato=ACCESE'
 			});
     }	
@@ -213,7 +213,7 @@ app.get('/luci', function (req, res) {
 // Implementazione metodi per gestione MOTORE =======
 // ==================================================
 function aumentaManetta(direzione,verso,step){
-  logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
+ // logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -228,7 +228,7 @@ function aumentaManetta(direzione,verso,step){
 		//Fermo il motore
 		spegnimentoForzato=true;
 		spegniMotore(verso);
-		esito.msg='NON aumento la manetta\n i motori viaggiano a velocita diversa\n FORZO spegnimento motore';
+		esito.msg='NON aumento a manetta\n i muturi sunnu a velocita divessa\n Studu tutti cosi';
 		esito.direzione=direzione;
 		esito.verso=verso;
 	  }else{
@@ -238,17 +238,17 @@ function aumentaManetta(direzione,verso,step){
   if(!spegnimentoForzato){
 	  if (velocitaVerso >= 255 || (velocitaVerso + (DELTA_VELOCITA*step) >=255)) {
 		 esito=muoviMotore(255,direzione,verso);
-		 esito.msg='raggiunta velocita massima';
+		 esito.msg='non poi annari chiu fotti, si o massimu chiu veloci da luci';
 	  }else{
 		  velocitaVerso += (DELTA_VELOCITA*step);
 		  esito=muoviMotore(velocitaVerso,direzione,verso);
-		  esito.msg='aumentata la manetta';
+		  esito.msg='aumentai a manetta';
 	  }	  
   }
   return esito;
 }
 function diminuisciManetta(direzione,verso,step){
-  logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step);
+ // logger.debug('diminuisco manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -284,7 +284,6 @@ function diminuisciManetta(direzione,verso,step){
    return esito;	
 }
 function getVelocitaMotoreSX(direzione){
-	logger.debug('START getVelocitaMotoreSX, direzione = '+direzione); 
 	var velocitaCalcolata;
 	if(direzione=='AVANTI'){
 		velocitaCalcolata=MOTORE_SX_FORWARD.getPwmDutyCycle();
@@ -297,12 +296,10 @@ function getVelocitaMotoreSX(direzione){
 			velocitaCalcolata=VELOCITA_ZERO;
 		}
 	}
-	logger.debug('END getVelocitaMotoreSX');
 	return velocitaCalcolata;
 }
 
 function getVelocitaMotoreDX(direzione){
-	logger.debug('START getVelocitaMotoreDX, direzione = '+direzione); 
 	var velocitaCalcolata;
 	if(direzione=='AVANTI'){
 		velocitaCalcolata=MOTORE_DX_FORWARD.getPwmDutyCycle();
@@ -315,16 +312,14 @@ function getVelocitaMotoreDX(direzione){
 			velocitaCalcolata=VELOCITA_ZERO;
 		}
 	}
-	logger.debug('END getVelocitaMotoreDX'); 
 	return velocitaCalcolata;	
 }
 /**
 	Spegne il motore SX,DX oppure Entrambi
 **/
 function spegniMotore(verso){
-	logger.debug('spengo il motore..'+verso);
 	if(REGISTRAZIONE){
-		registraAzioniCarro(verso,STOP,null);
+		registraAzioniCarro(verso,STOP,'STOP');
 	}
     if(verso=='SX'){
 		MOTORE_SX_FORWARD.pwmWrite(STOP); 
@@ -338,15 +333,12 @@ function spegniMotore(verso){
 		MOTORE_DX_FORWARD.pwmWrite(STOP); 
 		MOTORE_DX_BACKWARD.pwmWrite(STOP);	
 	}	
-	logger.debug('spento.');
 }
 /**
 	Funzione core 
 	per muovere il motore SX,DX o DRITTO
 **/
 function muoviMotore(velocitaImpostata,direzione,verso){
-	logger.debug('muoviMotore START-> direzione:'+direzione+' verso='+verso);
-	logger.debug('..velocitaImpostata '+ velocitaImpostata);
 	var esito ={};
     var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
 	if(REGISTRAZIONE){
@@ -389,7 +381,6 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 	esito.velocitaFisicaMotoreDX=velocitaFisicaImpostataDX;	  
 	esito.direzioneMotoreSX = ultimaDirezioneSX;
 	esito.direzioneMotoreDX = ultimaDirezioneDX;
-	logger.debug('muoviMotore END');
 	return esito;
 }
 /**
@@ -420,7 +411,7 @@ function registraAzioniCarro(motore,velocita,direzione){
 function popAzione(){
 	var azione=null;
 	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
-		azione = (LISTA_AZIONI_CARRO.sort(function(a, b) {return a.fine - b.fine;})).shift();
+		azione = LISTA_AZIONI_CARRO.shift();
 	}
 	return azione;
 }
@@ -432,12 +423,21 @@ function esegueAzioni() {
 	if(azioneCorrente){
 		if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
+			logger.debug('Azione :studu i muturi');
 			spegniMotore('DRITTO');
 		}else{
+			logger.debug('Azione: movu u muturi '+azioneCorrente.motore+
+						 ' a velocita '+
+						 azioneCorrente.velocita+
+						 ' direzione '+
+						 azioneCorrente.direzione+
+						 ' pi '+(azioneCorrente.fine-azioneCorrente.inizio)+' Secunni';
 		    muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
 		}
 		clearTimeout(TIMER_REGISTRAZIONE);
 		if (!azioneCorrente.ultimaAzione){//esegue la prossima azione tra N millisecondi
+		  logger.debug('mpostu u timer a '+(azioneCorrente.fine-azioneCorrente.inizio)+
+						' secunni cosi poi patti azione successiva..'); 
 		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
 		}		
 	}	
@@ -473,7 +473,7 @@ var server = http.createServer(app);
 
 //con questo metodo forzo la chiusura di eventuali eventi (timer, ecc.)
 process.on('SIGINT', function() {
-  logger.debug(' spengo il Carro ...');
+  logger.debug(' sutudu u Carro ...');
   spegniMotore('DRITTO');
   console.log(' eseguo il process.exit()..');
   process.exit(0);

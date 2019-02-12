@@ -8,7 +8,8 @@ var titolo = canvas.text('Carro Armato- BI MAZZU A TUTTI BASTADDI');
 titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
 var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
 labelRegistraAzione.move(210,70).font({size: 8, fill: 'red', family: 'verdana' });
-
+var statoRegistrazione=false;
+var msgInputServizioMotore='';//in caso di registrazione attiva accodo i vari comandi in questa variabile
 var rHelp=canvas.text('R: avvia/stoppa registra azioni');
 var pHelp=canvas.text('P: riproduci registrazione');
 var kHelp=canvas.text('K: elimina registrazioni');
@@ -26,7 +27,14 @@ var mainInServizioRemotoMotore= canvas.text('').move(420,90).font({size: 10, fil
 var mainOutServizioRemotoMotore= canvas.text('').move(420,300).font({size: 10, fill: 'white', family: 'verdana' });
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
-	mainInServizioRemotoMotore.text(direzione+"-"+statoManetta+"-"+verso);
+	if(statoRegistrazione){
+		msgInputServizioMotore=msgInputServizioMotore+direzione+"-"+statoManetta+"-"+verso+'\n';
+		mainInServizioRemotoMotore.text(msgInputServizioMotore);
+	}else{
+		msgInputServizioMotore='';
+		mainInServizioRemotoMotore.text(direzione+"-"+statoManetta+"-"+verso);
+	}
+	
 }
 function stampaDatiOutServizioMotore(risposta){
 	var stepManetta='stepManettaMotore='+risposta.stepManetta+'\n';
@@ -55,9 +63,11 @@ function registra(){
 			labelRegistraAzione.text('REGISTRA AZIONI '+risposta.registrazione);
 			if (risposta.registrazione=='ON'){
 				labelRegistraAzione.animate().attr({ fill: '#f06' }).loop();
+				statoRegistrazione=true;
 			}else{
 				labelRegistraAzione.stop();
 				labelRegistraAzione.attr({ fill: 'red' })
+				statoRegistrazione=false;
 			}
 		}, function (error) {
 			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
@@ -72,15 +82,14 @@ function riproduci(){
 	then(
 		function (risposta) 
 		{	
-			var msg ='';
+			var msg ='staiu riproducennu. Vadditi i log su u Raspberry piffauri';
 			var listaAzioni=risposta.listaAzioni;
-			 for(var x = 0; x < listaAzioni.length;x++){
-				 msg = msg + 'motore '+listaAzioni[x].motore+' velocita '+
-						  listaAzioni[x].velocita+' '+listaAzioni[x].direzione+
-						  ' inizio '+listaAzioni[x].inizio+' fine '+
-						  listaAzioni[x].fine+' sec='+((listaAzioni[x].fine-listaAzioni[x].inizio)/1000)+'\n';
+			/* for(var x = 0; x < listaAzioni.length;x++){
+				 msg = msg +'vado a '+listaAzioni[x].motore+
+						  ' con velocita '+ listaAzioni[x].velocita+' '+listaAzioni[x].direzione+
+						  'per '+((listaAzioni[x].fine-listaAzioni[x].inizio)/1000)+' secondi \n';
 				
-			}
+			}*/
 			mainOutServizioRemotoMotore.text(msg);
 		}, function (error) {
 			mainOutServizioRemotoMotore.text('Errore chiamata\n'+error.url);
