@@ -32,7 +32,7 @@ function abbassaManettaSX(){
 		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
 		STEP_SX--;
 		stampaValorePosizioneManettaSX();
-		manopolaSX.animate(200, '<>').move(210,ULTIMA_POS_MANETTA_SX);
+		manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
 		var direzione;
 		var statoManettaSX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_SX,'SX')){//se non ho ancora raggiunto lo zero

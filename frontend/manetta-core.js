@@ -51,6 +51,7 @@ var labelValoreManettaSX = canvas.text(STEP_SX.toString()).move(210,390).font({s
 
 //Blocca/Sblocca una determinata manetta
 function toggleLockManetta(manetta){
+	return;
 	var colore='gray';
 	if(manetta=='SX'){
 	  lockManettaSX=!lockManettaSX;
