@@ -431,7 +431,7 @@ function esegueAzioni() {
 						 azioneCorrente.velocita+
 						 ' direzione '+
 						 azioneCorrente.direzione+
-						 ' pi '+(azioneCorrente.fine-azioneCorrente.inizio)+' Secunni';
+						 ' pi '+(azioneCorrente.fine-azioneCorrente.inizio)+' Secunni');
 		    muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
 		}
 		clearTimeout(TIMER_REGISTRAZIONE);
