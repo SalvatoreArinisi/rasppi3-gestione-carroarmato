@@ -57,7 +57,7 @@ function alzaManettaDX(){
 		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
 		STEP_DX++;
 		stampaValorePosizioneManettaDX();
-		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
+		manopolaDX.animate(200, '<>').move(310,ULTIMA_POS_MANETTA_DX);
 		var direzione;
 		var statoManettaDX;
 		if(!raggiuntoLoZero(ULTIMA_POS_MANETTA_DX,'DX')){//se non ho ancora raggiunto lo zero
