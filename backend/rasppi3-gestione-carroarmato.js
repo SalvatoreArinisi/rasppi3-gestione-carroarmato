@@ -423,24 +423,34 @@ function esegueAzioni() {
 	if(azioneCorrente){
 		if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
-			logger.debug('Azione :studu i muturi');
+			logger.debug('===Azione :studu i muturi');
 			spegniMotore('DRITTO');
 		}else{
-			logger.debug('Azione: movu u muturi '+azioneCorrente.motore+
+			if(azioneCorrente.ultimaAzione){
+				logger.debug('***ULTIMA AZIONE***');
+			}
+			logger.debug('imposto '+azioneCorrente.motore+
 						 ' a velocita '+
 						 azioneCorrente.velocita+
 						 ' direzione '+
 						 azioneCorrente.direzione+
-						 ' pi '+(azioneCorrente.fine-azioneCorrente.inizio)+' Secunni');
-		    muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
+						 ' per '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+' Secunni');
+		    esito =muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
+			logger.debug('====impostato motore con:');
+			logger.debug('==velocitaFisicaMotoreSX '+esito.velocitaFisicaMotoreSX);
+			logger.debug('==velocitaFisicaMotoreDX '+esito.velocitaFisicaMotoreDX);
+			logger.debug('============================================');
 		}
-		clearTimeout(TIMER_REGISTRAZIONE);
+		
 		if (!azioneCorrente.ultimaAzione){//esegue la prossima azione tra N millisecondi
-		  logger.debug('mpostu u timer a '+(azioneCorrente.fine-azioneCorrente.inizio)+
-						' secunni cosi poi patti azione successiva..'); 
+		  logger.debug('Imposto timer a '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+
+						' secunni per azione successiva..'); 
 		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
 		}		
-	}	
+	}else{//non ci sono piu azioni
+		logger.debug('elimino TIMER');
+		clearTimeout(TIMER_REGISTRAZIONE);
+	}		
   }
 }
 
