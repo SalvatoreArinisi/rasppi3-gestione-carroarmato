@@ -421,10 +421,10 @@ function esegueAzioni() {
   if(!REGISTRAZIONE){
 	var azioneCorrente = popAzione();
 	if(azioneCorrente){
-		if(azioneCorrente.motore=='DRITTO'  && azioneCorrente.velocita==STOP){
+		if(azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
-			logger.debug('===Azione :studu i muturi');
-			spegniMotore('DRITTO');
+			logger.debug('===Azione :studu u muturi '+azioneCorrente.verso);
+			spegniMotore(azioneCorrente.motore);
 		}else{
 			if(azioneCorrente.ultimaAzione){
 				logger.debug('***ULTIMA AZIONE***');
