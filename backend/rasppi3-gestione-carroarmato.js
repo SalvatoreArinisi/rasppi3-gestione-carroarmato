@@ -441,16 +441,13 @@ function esegueAzioni() {
 			logger.debug('==velocitaFisicaMotoreDX '+esito.velocitaFisicaMotoreDX);
 			logger.debug('============================================');
 		}
-		
+		clearTimeout(TIMER_REGISTRAZIONE);
 		if (!azioneCorrente.ultimaAzione){//esegue la prossima azione tra N millisecondi
 		  logger.debug('Imposto timer a '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+
 						' secunni per azione successiva..'); 
 		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
 		}		
-	}else{//non ci sono piu azioni
-		logger.debug('elimino TIMER');
-		clearTimeout(TIMER_REGISTRAZIONE);
-	}		
+	}	
   }
 }
 
