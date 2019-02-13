@@ -64,7 +64,12 @@ logger.setLevel('DEBUG');
 // Implementazione metodi REST =======
 // ===================================
 
-app.get('/motore', function (req, res) {
+/**
+	Muove il Carro.
+	Effettua dei controlli stringenti sui query param delle richieste
+	e sullo stato dei motori
+**/
+app.get('/motoreConCheck', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
     var esito={};
 	var checkDirezione=req.query.direzione=='AVANTI' || req.query.direzione=='INDIETRO';
@@ -122,6 +127,28 @@ app.get('/motore', function (req, res) {
 	}
 })
 
+/**
+	Muove il Carro.
+	Evita i controlli stringenti del metodo sopra
+**/
+app.get('/motore', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+    var esito={};
+	if(req.query.manetta=='AUMENTA'){ 
+			esito = aumentaManetta(req.query.direzione,req.query.verso,req.query.step);
+			esito.codErr='200';	
+			esito.stepImpostato=req.query.step;
+			res.json(esito);
+	}else if(req.query.manetta=='DIMINUISCI'){ 
+			esito = diminuisciManetta(req.query.direzione,req.query.verso,req.query.step);
+			esito.codErr='200';	
+			esito.stepImpostato=req.query.step;
+			res.json(esito);
+	}
+})
+/**
+	Ferma il Carro
+**/
 app.get('/stopCarro', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
     ultimaDirezioneSX=null;
@@ -157,6 +184,9 @@ app.get('/registra', function (req, res) {
 	res.json(esito);	
 })
 
+/**
+	Cancella eventuali dati Registrazione
+**/
 app.get('/cancellaRegistrazione', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	if(TIMER_REGISTRAZIONE){
@@ -187,7 +217,9 @@ app.get('/riproduci', function (req, res) {
 	res.json(esito);
 })
 
-
+/**
+	Accende/Spegne luci
+**/
 app.get('/luci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
     var esito={};
@@ -213,7 +245,6 @@ app.get('/luci', function (req, res) {
 // Implementazione metodi per gestione MOTORE =======
 // ==================================================
 function aumentaManetta(direzione,verso,step){
- // logger.debug('aumento manetta. Direzione='+direzione+' verso='+verso+' step='+step);
   var esito ={};
   var velocitaVerso;
   var spegnimentoForzato=false;
@@ -391,17 +422,16 @@ function muoviMotore(velocitaImpostata,direzione,verso){
 		DRITTO.
 **/
 function registraAzioniCarro(motore,velocita,direzione){
-	if(LISTA_AZIONI_CARRO){
-		if(LISTA_AZIONI_CARRO.length>0){
-			LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=Date.now();
-		}		
-		var azioneCarro={};
-		azioneCarro.motore=motore;
-		azioneCarro.velocita=velocita;
-		azioneCarro.direzione=direzione;
-		azioneCarro.inizio=Date.now();
-		LISTA_AZIONI_CARRO.push(azioneCarro);		
-	}
+	var adesso = Date.now();
+	if(LISTA_AZIONI_CARRO.length>0){
+		LISTA_AZIONI_CARRO[LISTA_AZIONI_CARRO.length-1].fine=adesso;
+	}		
+	var azioneCarro={};
+	azioneCarro.motore=motore;
+	azioneCarro.velocita=velocita;
+	azioneCarro.direzione=direzione;
+	azioneCarro.inizio=adesso;
+	LISTA_AZIONI_CARRO.push(azioneCarro);		
 }
 
 /**
@@ -423,10 +453,10 @@ function esegueAzioni() {
 	if(azioneCorrente){
 		if(azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
-			logger.debug('===Azione :studu u muturi '+azioneCorrente.verso);
+			//logger.debug('===Azione :studu u muturi '+azioneCorrente.verso);
 			spegniMotore(azioneCorrente.motore);
 		}else{
-			if(azioneCorrente.ultimaAzione){
+			/*if(azioneCorrente.ultimaAzione){
 				logger.debug('***ULTIMA AZIONE***');
 			}
 			logger.debug('imposto '+azioneCorrente.motore+
@@ -434,17 +464,17 @@ function esegueAzioni() {
 						 azioneCorrente.velocita+
 						 ' direzione '+
 						 azioneCorrente.direzione+
-						 ' per '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+' Secunni');
+						 ' per '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+' Secunni');*/
 		    esito =muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
-			logger.debug('====impostato motore con:');
+			/*logger.debug('====impostato motore con:');
 			logger.debug('==velocitaFisicaMotoreSX '+esito.velocitaFisicaMotoreSX);
 			logger.debug('==velocitaFisicaMotoreDX '+esito.velocitaFisicaMotoreDX);
-			logger.debug('============================================');
+			logger.debug('============================================');*/
 		}
 		clearTimeout(TIMER_REGISTRAZIONE);
 		if (!azioneCorrente.ultimaAzione){//esegue la prossima azione tra N millisecondi
-		  logger.debug('Imposto timer a '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+
-						' secunni per azione successiva..'); 
+		  /*logger.debug('Imposto timer a '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+
+						' secunni per azione successiva..'); */
 		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
 		}		
 	}	

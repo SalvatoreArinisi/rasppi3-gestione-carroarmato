@@ -4,27 +4,37 @@ https://svgjs.com
 //Area di disegno SVG
 var canvas = SVG('drawing').viewbox(0, 0,1000,500);
 /* Titolo sopra il cruscotto */
-var titolo = canvas.text('Carro Armato- BI MAZZU A TUTTI BASTADDI');
-titolo.move(210,40).font({ fill: 'orange', family: 'verdana' });
-var labelRegistraAzione=canvas.text('REGISTRA AZIONI OFF');
-labelRegistraAzione.move(210,70).font({size: 8, fill: 'red', family: 'verdana' });
+var titolo = canvas.text('Cromwell tank');
+titolo.move(500,40).font({ fill: 'orange', family: 'verdana' });
+var labelRegistraAzione=canvas.text('REC OFF');
+labelRegistraAzione.move(260,110).font({size: 8, fill: 'yellow', family: 'verdana' });
 var statoRegistrazione=false;
 var msgInputServizioMotore='';//in caso di registrazione attiva accodo i vari comandi in questa variabile
+
+var labelAlzaManettaSX=canvas.text('e').move(175,120).font({size: 20, fill: 'gray', family: 'verdana' });
+var labelAlzaManettaDX=canvas.text('q').move(360,120).font({size: 20, fill: 'gray', family: 'verdana' });
+var labelAbbassaManettaSX=canvas.text('a').move(175,320).font({size: 20, fill: 'gray', family: 'verdana' });
+var labelAbbassaManettaDX=canvas.text('d').move(360,320).font({size: 20, fill: 'gray', family: 'verdana' });
+
+var VALORE_ALZA_MANETTA_SX='e';
+var VALORE_ALZA_MANETTA_DX='q';
+
 var rHelp=canvas.text('R: avvia/stoppa registra azioni');
 var pHelp=canvas.text('P: riproduci registrazione');
 var kHelp=canvas.text('K: elimina registrazioni');
+var f1Help=canvas.text('F2: inverte comandi manette');
 
-rHelp.move(0,200).font({size: 10, fill: 'white', family: 'verdana' });
-pHelp.move(0,220).font({size: 10, fill: 'white', family: 'verdana' });
-kHelp.move(0,240).font({size: 10, fill: 'white', family: 'verdana' });
+rHelp.move(0,10).font({size: 8, fill: 'white', family: 'verdana' });
+pHelp.move(150,10).font({size: 8, fill: 'white', family: 'verdana' });
+kHelp.move(280,10).font({size: 8, fill: 'white', family: 'verdana' });
+f1Help.move(0,30).font({size: 8, fill: 'white', family: 'verdana' });
 
 var image = canvas.image('pierino.png', 300, 400).move(500,0);
 
-
 //Input al servizio remoto del motore
-var mainInServizioRemotoMotore= canvas.text('').move(420,90).font({size: 10, fill: 'white', family: 'verdana' });
+var mainInServizioRemotoMotore= canvas.text('').move(420,70).font({size: 5, fill: 'white', family: 'verdana' });
 //Output del servizio remoto del motore
-var mainOutServizioRemotoMotore= canvas.text('').move(420,300).font({size: 10, fill: 'white', family: 'verdana' });
+var mainOutServizioRemotoMotore= canvas.text('').move(500,300).font({size: 5, fill: 'white', family: 'verdana' });
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
 	if(statoRegistrazione){
@@ -60,7 +70,7 @@ function registra(){
 	then(
 		function (risposta) 
 		{	
-			labelRegistraAzione.text('REGISTRA AZIONI '+risposta.registrazione);
+			labelRegistraAzione.text('REC '+risposta.registrazione);
 			if (risposta.registrazione=='ON'){
 				labelRegistraAzione.animate().attr({ fill: '#f06' }).loop();
 				statoRegistrazione=true;
@@ -115,11 +125,11 @@ function cancellaRegistrazione(){
 	Gestione eventi della tastiera
 */
 document.addEventListener("keydown", function(event) {
-  if(event.key=='q'){
+  if(event.key==VALORE_ALZA_MANETTA_DX){
 	  alzaManettaDX();
   }else if(event.key=='a'){
 	  abbassaManettaSX();
-  }else if(event.key=='e'){
+  }else if(event.key==VALORE_ALZA_MANETTA_SX){
 	  alzaManettaSX();
   }else if(event.key=='d'){
 	  abbassaManettaDX();
@@ -135,7 +145,10 @@ document.addEventListener("keydown", function(event) {
 	  riproduci();
   }else if(event.key=='k'){
 	  cancellaRegistrazione();
-  }else if(event.key=='F1'){
-	  cancellaRegistrazione();
+  }else if(event.key=='F2'){
+	  VALORE_ALZA_MANETTA_SX=VALORE_ALZA_MANETTA_SX=='q'?'e':'q';
+	  VALORE_ALZA_MANETTA_DX=VALORE_ALZA_MANETTA_DX=='e'?'q':'e';
+	  labelAlzaManettaSX.text(VALORE_ALZA_MANETTA_SX);
+	  labelAlzaManettaDX.text(VALORE_ALZA_MANETTA_DX);
   }
 });
