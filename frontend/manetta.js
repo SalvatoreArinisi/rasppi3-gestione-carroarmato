@@ -1,11 +1,16 @@
 /**
 	Alza la sola manetta di Sinistra
 **/
-function alzaManettaSX(){
-	if(!lockManettaSX && STEP_SX<5) {	
+function alzaManettaSX(step){
+	if(!lockManettaSX && (step==5 || Math.abs(STEP_SX*step)<5)) {
 		toggleLockManetta('SX');
-		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-deltaVariazioneManetta;
-		STEP_SX++;
+		if(step==5){
+			ULTIMA_POS_MANETTA_SX = 215-(deltaVariazioneManetta*step);
+			STEP_SX = step;				
+		}else if(Math.abs(STEP_SX*step)<5){
+			ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-(deltaVariazioneManetta*step);
+			STEP_SX = STEP_SX+step;	
+		}
 		stampaValorePosizioneManettaSX();
 		manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
 		var direzione;
@@ -18,7 +23,7 @@ function alzaManettaSX(){
 				direzione='AVANTI';
 				statoManettaSX='AUMENTA';
 			}
-			impostaManettaCarro(direzione,statoManettaSX,'SX',1);					
+			impostaManettaCarro(direzione,statoManettaSX,'SX',step);					
 		}		
 	}
 }
@@ -26,11 +31,16 @@ function alzaManettaSX(){
 /**
 	Abbassa la sola manetta di Sinistra
 **/
-function abbassaManettaSX(){
-	if(!lockManettaSX && STEP_SX>-5) {//massima posizione in basso della manetta
+function abbassaManettaSX(step){
+	if(!lockManettaSX &&  (step==5 || Math.abs(STEP_SX*step)<5)) {//massima posizione in basso della manetta
 		toggleLockManetta('SX');
-		ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+deltaVariazioneManetta;
-		STEP_SX--;
+		if(step==5){
+			ULTIMA_POS_MANETTA_SX = 215+(deltaVariazioneManetta*step);
+			STEP_SX = step;				
+		}else if(Math.abs(STEP_SX*step)<5){
+			ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+(deltaVariazioneManetta*step);
+			STEP_SX=STEP_SX-step;
+		}				
 		stampaValorePosizioneManettaSX();
 		manopolaSX.animate(200, '<>').move(200,ULTIMA_POS_MANETTA_SX);
 		var direzione;
@@ -43,7 +53,7 @@ function abbassaManettaSX(){
 				direzione='AVANTI';
 				statoManettaSX='DIMINUISCI';
 			}
-			impostaManettaCarro(direzione,statoManettaSX,'SX',1);					
+			impostaManettaCarro(direzione,statoManettaSX,'SX',step);					
 		}		
 	}	
 }
@@ -51,11 +61,16 @@ function abbassaManettaSX(){
 /**
 	Alza la sola manetta di Destra
 **/
-function alzaManettaDX(){
-	if(!lockManettaDX && STEP_DX<5) {
+function alzaManettaDX(step){
+	if(!lockManettaDX && (step==5 || Math.abs(STEP_DX*step)<5)) {
 		toggleLockManetta('DX');
-		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-deltaVariazioneManetta;
-		STEP_DX++;
+		if(step==5){
+			ULTIMA_POS_MANETTA_DX = 215-(deltaVariazioneManetta*step);
+			STEP_SX = step;				
+		}else if(Math.abs(STEP_SX*step)<5){
+			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-(deltaVariazioneManetta*step);
+			STEP_SX = STEP_SX+step;	
+		}
 		stampaValorePosizioneManettaDX();
 		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 		var direzione;
@@ -68,7 +83,7 @@ function alzaManettaDX(){
 				direzione='AVANTI';
 				statoManettaDX='AUMENTA';
 			}
-			impostaManettaCarro(direzione,statoManettaDX,'DX',1);			
+			impostaManettaCarro(direzione,statoManettaDX,'DX',step);			
 		}		
 	}
 }
@@ -76,11 +91,16 @@ function alzaManettaDX(){
 /**
 	Abbassa la sola manetta di Destra
 **/
-function abbassaManettaDX(){
-	if(!lockManettaDX && STEP_DX>-5) {//massima posizione in basso della manetta
+function abbassaManettaDX(step){
+	if(!lockManettaDX && (step==5 || Math.abs(STEP_DX*step)<5)) {//massima posizione in basso della manetta
 		toggleLockManetta('DX');
-		ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+deltaVariazioneManetta;
-		STEP_DX--;
+		if(step==5){
+			ULTIMA_POS_MANETTA_DX = 215+(deltaVariazioneManetta*step);
+			STEP_SX = step;				
+		}else if(Math.abs(STEP_SX*step)<5){
+			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+(deltaVariazioneManetta*step);
+			STEP_DX=STEP_DX-step;
+		}
 		stampaValorePosizioneManettaDX();
 		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
 		var direzione;
@@ -93,7 +113,7 @@ function abbassaManettaDX(){
 				direzione='AVANTI';
 				statoManettaDX='DIMINUISCI';
 			}
-			impostaManettaCarro(direzione,statoManettaDX,'DX',1);			
+			impostaManettaCarro(direzione,statoManettaDX,'DX',step);			
 		}	
 	}	
 }

@@ -6,6 +6,8 @@ var canvas = SVG('drawing').viewbox(0, 0,1000,500);
 /* Titolo sopra il cruscotto */
 var titolo = canvas.text('Cromwell tank');
 titolo.move(500,40).font({ fill: 'orange', family: 'verdana' });
+var image = canvas.image('pierino.png', 300, 400).move(500,0);
+
 var labelRegistraAzione=canvas.text('REC OFF');
 labelRegistraAzione.move(260,110).font({size: 8, fill: 'yellow', family: 'verdana' });
 var statoRegistrazione=false;
@@ -29,12 +31,13 @@ pHelp.move(150,10).font({size: 8, fill: 'white', family: 'verdana' });
 kHelp.move(280,10).font({size: 8, fill: 'white', family: 'verdana' });
 f1Help.move(0,30).font({size: 8, fill: 'white', family: 'verdana' });
 
-var image = canvas.image('pierino.png', 300, 400).move(500,0);
-
 //Input al servizio remoto del motore
 var mainInServizioRemotoMotore= canvas.text('').move(420,70).font({size: 5, fill: 'white', family: 'verdana' });
 //Output del servizio remoto del motore
 var mainOutServizioRemotoMotore= canvas.text('').move(500,300).font({size: 5, fill: 'white', family: 'verdana' });
+
+var W_rilasciata=true;
+var S_rilasciata=true;
 
 function stampaDatiInputServizioMotore(direzione,statoManetta,verso){
 	if(statoRegistrazione){
@@ -126,16 +129,18 @@ function cancellaRegistrazione(){
 */
 document.addEventListener("keydown", function(event) {
   if(event.key==VALORE_ALZA_MANETTA_DX){
-	  alzaManettaDX();
+	  alzaManettaDX(1);
   }else if(event.key=='a'){
-	  abbassaManettaSX();
+	  abbassaManettaSX(1);
   }else if(event.key==VALORE_ALZA_MANETTA_SX){
-	  alzaManettaSX();
+	  alzaManettaSX(1);
   }else if(event.key=='d'){
-	  abbassaManettaDX();
+	  abbassaManettaDX(1);
   }else if(event.key=='w'){
+	   W_rilasciata=false;
 	   alzaEntrambeManette(1);
   }else if(event.key=='s'){
+	   S_rilasciata=false;
 	   abbassaEntrambeManette(1);
   }else if(event.key==' '){
 	  azzeraManette();
@@ -150,5 +155,27 @@ document.addEventListener("keydown", function(event) {
 	  VALORE_ALZA_MANETTA_DX=VALORE_ALZA_MANETTA_DX=='e'?'q':'e';
 	  labelAlzaManettaSX.text(VALORE_ALZA_MANETTA_SX);
 	  labelAlzaManettaDX.text(VALORE_ALZA_MANETTA_DX);
+  }
+});
+
+document.addEventListener("keyup", function(event) {
+ if(event.key=='w'){
+	   W_rilasciata=true;
+	   azzeraManette();
+  }else if(event.key=='s'){
+	   S_rilasciata=true;
+	   azzeraManette();
+  }else if(event.key=='a'){
+	if(W_rilasciata){
+		azzeraManette();
+	}else{
+		alzaManettaSX(5);
+	}
+  }else if(event.key=='d'){
+	if(W_rilasciata){
+		azzeraManette();
+	}else{
+		alzaManettaDX(5);
+	}
   }
 });

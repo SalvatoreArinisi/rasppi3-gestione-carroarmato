@@ -206,11 +206,11 @@ app.get('/riproduci', function (req, res) {
 	res.header("Access-Control-Allow-Origin", "*");
 	var esito={};
 	if(RIPRODUZIONE){
-		esito.messaggio='stava gia registrannu moviti!';
+		esito.messaggio='sto gia registando';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 	}else{
 		
-		esito.messaggio='staiu registrannu moviti!';
+		esito.messaggio='sto registrando';
 		esito.listaAzioni=LISTA_AZIONI_CARRO;
 		esegueAzioni();		
 	}
@@ -348,14 +348,14 @@ function getVelocitaMotoreDX(direzione){
 /**
 	Spegne il motore SX,DX oppure Entrambi
 **/
-function spegniMotore(verso){
+function spegniMotore(motore){
 	if(REGISTRAZIONE){
-		registraAzioniCarro(verso,STOP,'STOP');
+		registraAzioniCarro(motore,STOP,'STOP');
 	}
-    if(verso=='SX'){
+    if(motore=='SX'){
 		MOTORE_SX_FORWARD.pwmWrite(STOP); 
 		MOTORE_SX_BACKWARD.pwmWrite(STOP);
-	}else if(verso=='DX'){
+	}else if(motore=='DX'){
 		MOTORE_DX_FORWARD.pwmWrite(STOP); 
 		MOTORE_DX_BACKWARD.pwmWrite(STOP);	
 	}else {
@@ -369,38 +369,38 @@ function spegniMotore(verso){
 	Funzione core 
 	per muovere il motore SX,DX o DRITTO
 **/
-function muoviMotore(velocitaImpostata,direzione,verso){
+function muoviMotore(velocitaImpostata,direzione,motore){
 	var esito ={};
     var velocitaFisicaImpostataSX,velocitaFisicaImpostataDX,direzioneSX,direzioneDX;
 	if(REGISTRAZIONE){
-		registraAzioniCarro(verso,velocitaImpostata,direzione);
+		registraAzioniCarro(motore,velocitaImpostata,direzione);
 	}
 	if(direzione=='AVANTI'){
-		if(verso=='SX'){
+		if(motore=='SX'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();	
 			direzioneSX=direzione;
-		}else if(verso=='DX'){
+		}else if(motore=='DX'){
 			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 			
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();						
-		}else if(verso=='DRITTO'){
+		}else if(motore=='DRITTO'){
 			MOTORE_SX_FORWARD.pwmWrite(velocitaImpostata); 	
 			MOTORE_DX_FORWARD.pwmWrite(velocitaImpostata); 			
 			velocitaFisicaImpostataSX=MOTORE_SX_FORWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_FORWARD.getPwmDutyCycle();			
 		}
 	}else if(direzione=='INDIETRO'){
-		if(verso=='SX'){
+		if(motore=='SX'){
 			MOTORE_SX_BACKWARD.pwmWrite(velocitaImpostata);
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();					
-		}else if(verso=='DX'){
+		}else if(motore=='DX'){
 			MOTORE_DX_BACKWARD.pwmWrite(velocitaImpostata);
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
 			velocitaFisicaImpostataDX=MOTORE_DX_BACKWARD.getPwmDutyCycle();					
-		}else if(verso=='DRITTO'){
+		}else if(motore=='DRITTO'){
 			MOTORE_SX_BACKWARD.pwmWrite(velocitaImpostata);
 			MOTORE_DX_BACKWARD.pwmWrite(velocitaImpostata);
 			velocitaFisicaImpostataSX=MOTORE_SX_BACKWARD.getPwmDutyCycle();
@@ -441,16 +441,14 @@ function registraAzioniCarro(motore,velocita,direzione){
 function popAzione(){
 	var azione=null;
 	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
-		azione = LISTA_AZIONI_CARRO.shift();
+		azione = LISTA_AZIONI_CARRO[0];
 	}
 	return azione;
 }
 
-function esegueAzioni() {
+function esegueAzioni(){
   var esito ={};
-  if(!REGISTRAZIONE){
-	var azioneCorrente = popAzione();
-	if(azioneCorrente){
+	if(popAzione()){
 		if(azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
 			//logger.debug('===Azione :studu u muturi '+azioneCorrente.verso);
@@ -465,7 +463,7 @@ function esegueAzioni() {
 						 ' direzione '+
 						 azioneCorrente.direzione+
 						 ' per '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+' Secunni');*/
-		    esito =muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
+			esito =muoviMotore(azioneCorrente.velocita,azioneCorrente.direzione,azioneCorrente.motore);
 			/*logger.debug('====impostato motore con:');
 			logger.debug('==velocitaFisicaMotoreSX '+esito.velocitaFisicaMotoreSX);
 			logger.debug('==velocitaFisicaMotoreDX '+esito.velocitaFisicaMotoreDX);
@@ -476,9 +474,9 @@ function esegueAzioni() {
 		  /*logger.debug('Imposto timer a '+((azioneCorrente.fine-azioneCorrente.inizio)/1000)+
 						' secunni per azione successiva..'); */
 		  TIMER_REGISTRAZIONE = setTimeout(esegueAzioni, (azioneCorrente.fine-azioneCorrente.inizio));	  		  			
+		  LISTA_AZIONI_CARRO.shift();//elimino elemento in TOP
 		}		
-	}	
-  }
+	}
 }
 
 
