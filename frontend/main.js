@@ -131,11 +131,23 @@ document.addEventListener("keydown", function(event) {
   if(event.key==VALORE_ALZA_MANETTA_DX){
 	  alzaManettaDX(1);
   }else if(event.key=='a'){
-	  abbassaManettaSX(1);
+		if(W_rilasciata){
+			abbassaManettaSX(1);
+		}else{
+			if(STEP_SX>3){
+			   abbassaManettaSX(1);
+			}
+		}	  	  
   }else if(event.key==VALORE_ALZA_MANETTA_SX){
 	  alzaManettaSX(1);
   }else if(event.key=='d'){
-	  abbassaManettaDX(1);
+		if(W_rilasciata){
+			abbassaManettaDX(1);
+		}else{
+			if(STEP_DX>3){
+			   abbassaManettaDX(1);
+			}
+		}	  		  
   }else if(event.key=='w'){
 	   W_rilasciata=false;
 	   alzaEntrambeManette(1);
