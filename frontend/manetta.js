@@ -66,10 +66,10 @@ function alzaManettaDX(step){
 		toggleLockManetta('DX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_DX = 215-(deltaVariazioneManetta*step);
-			STEP_SX = step;				
-		}else if(Math.abs(STEP_SX*step)<5){
+			STEP_DX = step;				
+		}else if(Math.abs(STEP_DX*step)<5){
 			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-(deltaVariazioneManetta*step);
-			STEP_SX = STEP_SX+step;	
+			STEP_DX = STEP_DX+step;	
 		}
 		stampaValorePosizioneManettaDX();
 		manopolaDX.animate(200, '<>').move(320,ULTIMA_POS_MANETTA_DX);
@@ -96,8 +96,8 @@ function abbassaManettaDX(step){
 		toggleLockManetta('DX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_DX = 215+(deltaVariazioneManetta*step);
-			STEP_SX = step;				
-		}else if(Math.abs(STEP_SX*step)<=5){
+			STEP_DX = step;				
+		}else if(Math.abs(STEP_DX*step)<=5){
 			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+(deltaVariazioneManetta*step);
 			STEP_DX=STEP_DX-step;
 		}
