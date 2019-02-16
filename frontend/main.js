@@ -134,7 +134,7 @@ document.addEventListener("keydown", function(event) {
 		if(W_rilasciata){
 			abbassaManettaSX(1);
 		}else{
-			if(STEP_SX>3){
+			if(STEP_SX>2){
 			   abbassaManettaSX(1);
 			}
 		}	  	  
@@ -144,7 +144,7 @@ document.addEventListener("keydown", function(event) {
 		if(W_rilasciata){
 			abbassaManettaDX(1);
 		}else{
-			if(STEP_DX>3){
+			if(STEP_DX>2){
 			   abbassaManettaDX(1);
 			}
 		}	  		  
