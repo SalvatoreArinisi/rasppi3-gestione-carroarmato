@@ -2,12 +2,12 @@
 	Alza la sola manetta di Sinistra
 **/
 function alzaManettaSX(step){
-	if(!lockManettaSX && (step==5 || Math.abs(STEP_SX*step)<5)) {
+	if(!lockManettaSX && (step==5 || (STEP_SX*step)<5)) {
 		toggleLockManetta('SX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_SX = 215-(deltaVariazioneManetta*step);
 			STEP_SX = step;				
-		}else if(Math.abs(STEP_SX*step)<5){
+		}else if((STEP_SX*step)<5){
 			ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX-(deltaVariazioneManetta*step);
 			STEP_SX = STEP_SX+step;	
 		}
@@ -29,15 +29,26 @@ function alzaManettaSX(step){
 }
 
 /**
-	Abbassa la sola manetta di Sinistra
+	Abbassa la sola manetta di Sinistra.
+	
+	@param step 
+		indica di quanti passi abbassare rispetto alla
+		posizione attuale
+		es: 
+			la manetta si trova a STEP_SX = 3
+			do un abbassa(2)
+			significa che abbasso di ulteriori 2 step 
+			quindi da 3 passo a 1
+			
+		uno step 5 abbasso al massimo.	
 **/
 function abbassaManettaSX(step){
-	if(!lockManettaSX &&  (step==5 || Math.abs(STEP_SX*step)<=5)) {//massima posizione in basso della manetta
+	if(!lockManettaSX &&  (step==5 || (STEP_SX*step)>-5)) {//massima posizione in basso della manetta
 		toggleLockManetta('SX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_SX = 215+(deltaVariazioneManetta*step);
-			STEP_SX = step;				
-		}else if(Math.abs(STEP_SX*step)<=5){
+			STEP_SX = -step;				
+		}else if((STEP_SX*step) >-5){
 			ULTIMA_POS_MANETTA_SX = ULTIMA_POS_MANETTA_SX+(deltaVariazioneManetta*step);
 			STEP_SX=STEP_SX-step;
 		}				
@@ -62,12 +73,12 @@ function abbassaManettaSX(step){
 	Alza la sola manetta di Destra
 **/
 function alzaManettaDX(step){
-	if(!lockManettaDX && (step==5 || Math.abs(STEP_DX*step)<5)) {
+	if(!lockManettaDX && (step==5 || (STEP_DX*step)<5)) {
 		toggleLockManetta('DX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_DX = 215-(deltaVariazioneManetta*step);
 			STEP_DX = step;				
-		}else if(Math.abs(STEP_DX*step)<5){
+		}else if((STEP_DX*step)<5){
 			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX-(deltaVariazioneManetta*step);
 			STEP_DX = STEP_DX+step;	
 		}
@@ -92,12 +103,12 @@ function alzaManettaDX(step){
 	Abbassa la sola manetta di Destra
 **/
 function abbassaManettaDX(step){
-	if(!lockManettaDX && (step==5 || Math.abs(STEP_DX*step)<=5)) {//massima posizione in basso della manetta
+	if(!lockManettaDX && (step==5 ||(STEP_DX*step)>-5)) {//massima posizione in basso della manetta
 		toggleLockManetta('DX');
 		if(step==5){
 			ULTIMA_POS_MANETTA_DX = 215+(deltaVariazioneManetta*step);
-			STEP_DX = step;				
-		}else if(Math.abs(STEP_DX*step)<=5){
+			STEP_DX = -step;				
+		}else if((STEP_DX*step)>-5){
 			ULTIMA_POS_MANETTA_DX = ULTIMA_POS_MANETTA_DX+(deltaVariazioneManetta*step);
 			STEP_DX=STEP_DX-step;
 		}

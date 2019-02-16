@@ -131,23 +131,31 @@ document.addEventListener("keydown", function(event) {
   if(event.key==VALORE_ALZA_MANETTA_DX){
 	  alzaManettaDX(1);
   }else if(event.key=='a'){
-		if(W_rilasciata){
+		if(W_rilasciata && S_rilasciata){
 			abbassaManettaSX(1);
-		}else{
+		}else if(!W_rilasciata){
 			if(STEP_SX>2){
 			   abbassaManettaSX(1);
 			}
-		}	  	  
+		}else if(!S_rilasciata){
+			if(STEP_SX<-2){
+			   alzaManettaSX(1);
+			}
+		}			
   }else if(event.key==VALORE_ALZA_MANETTA_SX){
 	  alzaManettaSX(1);
   }else if(event.key=='d'){
-		if(W_rilasciata){
+		if(W_rilasciata && S_rilasciata){
 			abbassaManettaDX(1);
-		}else{
+		}else if(!W_rilasciata){
 			if(STEP_DX>2){
 			   abbassaManettaDX(1);
 			}
-		}	  		  
+		}else if(!S_rilasciata){
+			if(STEP_DX<-2){
+			   alzaManettaDX(1);
+			}		
+		}			
   }else if(event.key=='w'){
 	   W_rilasciata=false;
 	   alzaEntrambeManette(1);
@@ -178,16 +186,20 @@ document.addEventListener("keyup", function(event) {
 	   S_rilasciata=true;
 	   azzeraManette();
   }else if(event.key=='a'){
-	if(W_rilasciata){
+	if(W_rilasciata && S_rilasciata){
 		azzeraManette();
-	}else{
+	}else if(!W_rilasciata){
 		alzaManettaSX(5);
+	}else if(!S_rilasciata){
+		abbassaManettaSX(5);
 	}
   }else if(event.key=='d'){
-	if(W_rilasciata){
+	if(W_rilasciata && S_rilasciata){
 		azzeraManette();
-	}else{
+	}else if(!W_rilasciata){
 		alzaManettaDX(5);
+	}else if(!S_rilasciata){
+		abbassaManettaDX(5);
 	}
   }
 });
