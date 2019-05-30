@@ -436,19 +436,22 @@ function registraAzioniCarro(motore,velocita,direzione){
 
 /**
 	Preleva la prima azione dalla lista
-	contestualmente viene eliminata dalla lista
 **/
 function popAzione(){
-	var azione=null;
+	var cloneAzione=null;
 	if(LISTA_AZIONI_CARRO && LISTA_AZIONI_CARRO.length>0){
-		azione = LISTA_AZIONI_CARRO[0];
+		//prelevo il primo oggetto json
+		// e lo trasformo in stringa in modo da crearne una copia.
+		cloneAzione = JSON.stringify(LISTA_AZIONI_CARRO[0]);
 	}
-	return azione;
+	//a questo punto lo restituisco trasformandolo in oggetto JSON
+	return JSON.parse(cloneAzione);
 }
 
 function esegueAzioni(){
   var esito ={};
-	if(popAzione()){
+  var azioneCorrente = popAzione();
+	if(azioneCorrente){
 		if(azioneCorrente.velocita==STOP){
 			//sto chiedendo di fermare il carro
 			//logger.debug('===Azione :studu u muturi '+azioneCorrente.verso);
