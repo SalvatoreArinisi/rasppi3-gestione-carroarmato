@@ -1,7 +1,9 @@
 # rasppi3-gestione-carroarmato
-gestione remota di un raspberry pi3 montato su un carro armato
+gestione remota di un carro armato attraverso un raspberry pi3
 
-Il progetto è costituito da una parte frontend ed una backend.
+Il progetto è costituito da una parte hardware, che consiste in un raspberry pi3B 
+montato su un carro che comanda un controllo motore a cui sono connessi i motorini DC che muovono i cingoli e da una parte software costituita da un frontend ed un backend.
+
 Il frontend è una semplice pagina html con jquery e svg.js 
 Il backend è costituito da uno script su nodejs che si interfaccia con i GPIO del Raspberry PI3
 
