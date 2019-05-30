@@ -2,10 +2,10 @@
 gestione remota di un carro armato attraverso un raspberry pi3
 
 Il progetto è costituito da una parte hardware, che consiste in un raspberry pi3B 
-montato su un carro che comanda un controllo motore a cui sono connessi i motorini DC che muovono i cingoli e da una parte software costituita da un frontend ed un backend.
+montato su un carro che comanda un controllo motore a cui sono connessi i motorini DC che muovono i cingoli e da una parte software costituita da un progetto frontend ed uno backend.
 
 Il frontend è una semplice pagina html con jquery e svg.js 
-Il backend è costituito da uno script su nodejs che si interfaccia con i GPIO del Raspberry PI3
+Il backend è costituito da un servizio REST scritto in javascript per nodejs che si interfaccia con i GPIO del Raspberry PI3
 
 Per controllo GPIO tramide NODEJS è stato installata
 la libreria pigpio che gestisce il PWM (Pulse-width modulation)
