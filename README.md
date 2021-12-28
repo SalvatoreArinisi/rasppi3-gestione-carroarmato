@@ -16,6 +16,8 @@ Un limite della  pigpio C library e' che
 
 La libreria C e quindi anche il wrapper nodejs richiedono privilegi di root
 
+documentazione pigpio https://www.npmjs.com/package/pigpio
+
 ## Getting Started
 
 Le istruzioni seguenti consentono di scaricare il progetto in ambiente locale e di avviare il server
