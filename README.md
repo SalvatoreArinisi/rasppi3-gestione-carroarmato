@@ -29,11 +29,16 @@ Prima di iniziare assicurati di avere **Nodejs** ed **Npm** installati sul raspb
 per controllare la tua versione di nodejs, avvia node -v da shell.
 
 Per scaricare Node.js: www.nodejs.org.
+
 Per scaricare ed installare la libreria C pigpio:
- verifica prima se la libreria è gia presente tramite:** pigpiod -v**
+
+ verifica prima se la libreria è gia presente tramite: **pigpiod -v**
+ 
  se non è presente o la versione è molto vecchia eseguire l'installazione:
-  **sudo apt-get update**
-  **sudo apt-get install pigpio**
+ 
+ **sudo apt-get update**
+ 
+ **sudo apt-get install pigpio**
   
 Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "Step 1 - Install the pigpio C library" al link https://www.npmjs.com/package/pigpio
 
