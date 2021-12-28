@@ -16,7 +16,8 @@ Un limite della  pigpio C library e' che
 
 La libreria C e quindi anche il wrapper nodejs richiedono privilegi di root
 
-documentazione pigpio https://www.npmjs.com/package/pigpio
+documentazione pigpio nodejs https://github.com/fivdi/pigpio/blob/master/doc/gpio.md
+per la guida all'installazione libreria C pigpio Step 1 - Install the pigpio C library https://www.npmjs.com/package/pigpio
 
 ## Getting Started
 
@@ -24,11 +25,19 @@ Le istruzioni seguenti consentono di scaricare il progetto in ambiente locale e 
 
 ### Prerequisites
 
-Prima di iniziare assicurati di avere Nodejs ed Npm installati sul raspberry.
+Prima di iniziare assicurati di avere **Nodejs** ed **Npm** installati sul raspberry e di aver scaricato e compilato la **libreria C pigpio**, prerequisito per il modulo pigpio Nodejs.
 
 per controllare la tua versione di nodejs, avvia node -v da shell.
 
-Per scaricare Node.js vai a  nodejs.org.
+Per scaricare Node.js: www.nodejs.org.
+Per scaricare ed installare la libreria C pigpio:
+ verifica prima se la libreria è gia presente tramite:** pigpiod -v**
+ se non è presente o la versione è molto vecchia eseguire l'installazione:
+  **sudo apt-get update**
+  **sudo apt-get install pigpio**
+  
+Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "Step 1 - Install the pigpio C library" al link https://www.npmjs.com/package/pigpio
+
 
 ### Installing
 
