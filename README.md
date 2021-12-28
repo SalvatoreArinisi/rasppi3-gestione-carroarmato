@@ -16,8 +16,7 @@ Un limite della  pigpio C library e' che
 
 La libreria C e quindi anche il wrapper nodejs richiedono privilegi di root
 
-documentazione pigpio nodejs https://github.com/fivdi/pigpio/blob/master/doc/gpio.md
-per la guida all'installazione libreria C pigpio Step 1 - Install the pigpio C library https://www.npmjs.com/package/pigpio
+documentazione libreria pigpio del modulo Nodejs https://github.com/fivdi/pigpio/blob/master/doc/gpio.md
 
 ## Getting Started
 
