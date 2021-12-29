@@ -7,6 +7,6 @@
     "pigpio": "^1.1.2"
   },
   "scripts": {
-    "start": "sudo nodejs rasppi3-gestione-carroarmato.js"
+    "start": "sudo node rasppi3-gestione-carroarmato.js"
   }
 }

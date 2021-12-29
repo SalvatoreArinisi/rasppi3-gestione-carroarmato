@@ -8,23 +8,25 @@ var log4js = require('log4js');
 // Impostazione GPIO PIN ============
 // =======================
 // ******* INIZIO SETUP MOTORE SINISTRO **********
-const GPIO_MS_F=13;
-const GPIO_MS_B=6;
+const GPIO_MS_F=12;
+const GPIO_MS_B=18;
 const MOTORE_SX_FORWARD = new Gpio(GPIO_MS_F, {mode: Gpio.OUTPUT});
 const MOTORE_SX_BACKWARD = new Gpio(GPIO_MS_B, {mode: Gpio.OUTPUT});
 // ******* FINE SETUP MOTORE SINISTRO **********
 // ******* INIZIO SETUP MOTORE DESTRO **********
-const GPIO_MD_F=20;
-const GPIO_MD_B=16;
+
+const GPIO_MD_F=13;
+const GPIO_MD_B=17;
 const MOTORE_DX_FORWARD = new Gpio(GPIO_MD_F, {mode: Gpio.OUTPUT});
 const MOTORE_DX_BACKWARD = new Gpio(GPIO_MD_B, {mode: Gpio.OUTPUT});
+
 // ******* FINE SETUP MOTORE DESTRO **********
 // =======================
 // ******* INIZIO SETUP LUCI **********
-const GPIO_LUCI_SX=26;
-const GPIO_LUCI_DX=19;
-const LUCI_DX = new Gpio(GPIO_LUCI_DX, {mode: Gpio.OUTPUT});
-const LUCI_SX = new Gpio(GPIO_LUCI_SX, {mode: Gpio.OUTPUT});
+//const GPIO_LUCI_SX=26;
+//const GPIO_LUCI_DX=19;
+//const LUCI_DX = new Gpio(GPIO_LUCI_DX, {mode: Gpio.OUTPUT});
+//const LUCI_SX = new Gpio(GPIO_LUCI_SX, {mode: Gpio.OUTPUT});
 // ******* FINE LUCI **********
 // =======================
 
@@ -35,7 +37,7 @@ MOTORE_DX_FORWARD.pwmWrite(0);
 MOTORE_DX_BACKWARD.pwmWrite(0);
 
 
-const VELOCITA_ZERO=55;//a questa velocita il carro è fermo
+const VELOCITA_ZERO=55;//a questa velocita il carro fermo
 var DELTA_VELOCITA=40; //incremento/decremento di velocita per ogni AUMENTO/DIMINUISCO di manetta
 var STOP=0;
 var ultimaDirezioneSX;
@@ -513,7 +515,7 @@ var server = http.createServer(app);
 process.on('SIGINT', function() {
   logger.debug(' sutudu u Carro ...');
   spegniMotore('DRITTO');
-  console.log(' eseguo il process.exit()..');
+  logger.debug(' eseguo il process.exit()..');
   process.exit(0);
 });
 
