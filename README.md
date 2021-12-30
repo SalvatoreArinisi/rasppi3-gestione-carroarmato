@@ -38,14 +38,14 @@ Per scaricare Node.js vai su : https://nodejs.org/dist/latest-v9.x/
 
 Una volta scaricato il tar della distribuzione nodejs scelta (es. la 9) :
 
-***curl -o nodejs.tar.gz https://nodejs.org/dist/latest-v9.x/node-v9.11.2-linux-armv6l.tar.gz*
-**
+***curl -o nodejs.tar.gz https://nodejs.org/dist/latest-v9.x/node-v9.11.2-linux-armv6l.tar.gz***
+
 
 scompattarlo in una folder a piacere con il comando: ***tar -xzf nodejs.tar.gz***
 
 dopo averlo scompattato eseguire la copia in usr/local:
 
-***sudo cp -r node-v9.11.2-linux-armv6l/* /usr/local/***
+***sudo cp -r node-v9.11.2-linux-armv6l/**** ***/usr/local/***
 
 Infine eseguire 
 - ***node -v*** e verificare che sia *v9.11.2*
