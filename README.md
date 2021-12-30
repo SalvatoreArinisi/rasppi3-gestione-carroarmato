@@ -54,15 +54,14 @@ Infine eseguire
 
 ##### Libreria C pgpio
 verifica prima se la libreria è gia presente tramite: 	  ***pigpiod -v***
+Il progetto è stato testato con la versione 64 di pigpio
 
- 
- se non è presente o la versione è molto vecchia eseguire l'installazione:
- 
- **sudo apt-get update**
- 
- **sudo apt-get install pigpio**
+se non è presente o la versione è molto vecchia eseguire l'installazione:
+- ***sudo apt-get update***
+-  ***sudo apt-get install pigpio***
   
-Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "Step 1 - Install the pigpio C library" al link https://www.npmjs.com/package/pigpio
+Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "*Step 1 - Install the pigpio C library*" al link https://www.npmjs.com/package/pigpio
+
 
 ### Installing
 
