@@ -1,5 +1,5 @@
 # rasppi3-gestione-carroarmato
-gestione remota di un carro armato attraverso un raspberry.
+Gestione remota di un carro armato attraverso un raspberry.
 
 Il progetto è costituito da una parte hardware, che consiste in un raspberry pi3B oppure un raspberry pi Zero W
 montato su un carro che comanda un controllo motore a cui sono connessi i motorini DC che muovono i cingoli e da una parte software costituita da un progetto frontend ed uno backend.
@@ -52,7 +52,6 @@ Infine eseguire
 - **npm -v** e verificare che sia *5.6.0*
 
 
-
 ##### Libreria C pgpio
 verifica prima se la libreria è gia presente tramite: 	  ***pigpiod -v***
 
@@ -69,20 +68,18 @@ Per una guida completa sull'installazione di tale libreria C, guardare il paragr
 
 Per ottenere una copia del sorgente sulla macchina locale
 
-git clone https://github.com/SalvatoreArinisi/rasppi3-gestione-carroarmato.git
+***git clone https://github.com/SalvatoreArinisi/rasppi3-gestione-carroarmato.git***
 
-verrà creata la directory rasppi3-gestione-carroarmato sulla macchina locale
+verrà creata la directory **rasppi3-gestione-carroarmato** sulla propria macchina
 
-copiare la cartella e la relativa sottocartella sul raspberry:
-rasppi3-gestione-carroarmato\backend (non occorre copiare anche il frontend sul raspberry)
+copiare la seguente cartella e la relativa sottocartella sul raspberry:
 
-eseguire dal raspberry la shell 
-eseguire poi cd rasppi3-gestione-carroarmato
-eseguire cd backend
+- ***rasppi3-gestione-carroarmato\backend *** *(non occorre copiare anche il frontend sul raspberry)*
 
-installare le dipendenze del backend via npm
+aprire una shell via ssh sul raspberry ed eseguire i seguenti comandi:
 
-npm install
+- ***cd /rasppi3-gestione-carroarmato/backend***
+- ***npm install*** *(per installazione dipendenze)*
 
 spostarsi sulla macchina locale sulla cartella  
 rasppi3-gestione-carroarmato\frontend
