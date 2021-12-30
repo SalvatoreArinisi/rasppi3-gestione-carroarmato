@@ -1,11 +1,11 @@
 # rasppi3-gestione-carroarmato
-gestione remota di un carro armato attraverso un raspberry pi3
+gestione remota di un carro armato attraverso un raspberry.
 
-Il progetto è costituito da una parte hardware, che consiste in un raspberry pi3B 
+Il progetto è costituito da una parte hardware, che consiste in un raspberry pi3B oppure un raspberry pi Zero W
 montato su un carro che comanda un controllo motore a cui sono connessi i motorini DC che muovono i cingoli e da una parte software costituita da un progetto frontend ed uno backend.
 
 Il frontend è una semplice pagina html con jquery e svg.js 
-Il backend è costituito da un servizio REST scritto in javascript per nodejs che si interfaccia con i GPIO del Raspberry PI3
+Il backend è costituito da un servizio REST scritto in javascript per nodejs che si interfaccia con i GPIO del Raspberry
 
 Per controllo GPIO tramide NODEJS è stato installata
 la libreria pigpio che gestisce il PWM (Pulse-width modulation)
@@ -26,13 +26,17 @@ Le istruzioni seguenti consentono di scaricare il progetto in ambiente locale e 
 
 Prima di iniziare assicurati di avere **Nodejs** ed **Npm** installati sul raspberry e di aver scaricato e compilato la **libreria C pigpio**, prerequisito per il modulo pigpio Nodejs.
 
-per controllare la tua versione di nodejs, avvia node -v da shell.
+per controllare la tua versione di nodejs, avvia node -v da shell. Il progetto è stato testato sulla versione 9 di nodejs
 
-Per scaricare Node.js: www.nodejs.org.
+Per scaricare Node.js: https://nodejs.org/dist/latest-v9.x/ 
+
+		In caso di Raspberry pi 3B+ scegliere una distribuzione nodejs per CPU ARM64
+		
+		In caso di Raspberry pi Zero W scegliere la distribuzione per ARM6
 
 Per scaricare ed installare la libreria C pigpio:
 
- verifica prima se la libreria è gia presente tramite: **pigpiod -v**
+ verifica prima se la libreria è gia presente tramite: 	**pigpiod -v**
  
  se non è presente o la versione è molto vecchia eseguire l'installazione:
  
@@ -42,6 +46,7 @@ Per scaricare ed installare la libreria C pigpio:
   
 Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "Step 1 - Install the pigpio C library" al link https://www.npmjs.com/package/pigpio
 
+### Warning
 
 ### Installing
 
