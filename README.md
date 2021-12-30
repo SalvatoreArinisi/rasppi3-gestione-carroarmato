@@ -36,6 +36,23 @@ Per scaricare Node.js vai su : https://nodejs.org/dist/latest-v9.x/
 
 - In caso di Raspberry pi Zero W scegliere la distribuzione per ARM6
 
+Una volta scaricato il tar della distribuzione nodejs scelta (es. la 9) :
+
+***curl -o nodejs.tar.gz https://nodejs.org/dist/latest-v9.x/node-v9.11.2-linux-armv6l.tar.gz*
+**
+
+scompattarlo in una folder a piacere con il comando: ***tar -xzf nodejs.tar.gz***
+
+dopo averlo scompattato eseguire la copia in usr/local:
+
+***sudo cp -r node-v9.11.2-linux-armv6l/* /usr/local/***
+
+Infine eseguire 
+- ***node -v*** e verificare che sia *v9.11.2*
+- **npm -v** e verificare che sia *5.6.0*
+
+
+
 ##### Libreria C pgpio
 verifica prima se la libreria è gia presente tramite: 	  ***pigpiod -v***
 
@@ -47,8 +64,6 @@ verifica prima se la libreria è gia presente tramite: 	  ***pigpiod -v***
  **sudo apt-get install pigpio**
   
 Per una guida completa sull'installazione di tale libreria C, guardare il paragrafo "Step 1 - Install the pigpio C library" al link https://www.npmjs.com/package/pigpio
-
-### Warning
 
 ### Installing
 
