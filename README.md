@@ -26,17 +26,19 @@ Le istruzioni seguenti consentono di scaricare il progetto in ambiente locale e 
 
 Prima di iniziare assicurati di avere **Nodejs** ed **Npm** installati sul raspberry e di aver scaricato e compilato la **libreria C pigpio**, prerequisito per il modulo pigpio Nodejs.
 
-per controllare la tua versione di nodejs, avvia node -v da shell. Il progetto è stato testato sulla versione 9 di nodejs
+##### Nodejs ed NPM 
+per controllare la tua versione di nodejs, avvia node -v da shell. 
+Il progetto è stato testato sulla versione 9 di nodejs
 
-Per scaricare Node.js: https://nodejs.org/dist/latest-v9.x/ 
+Per scaricare Node.js vai su : https://nodejs.org/dist/latest-v9.x/ 
 
-		In caso di Raspberry pi 3B+ scegliere una distribuzione nodejs per CPU ARM64
-		
-		In caso di Raspberry pi Zero W scegliere la distribuzione per ARM6
+- In caso di Raspberry pi 3B+ scegliere una distribuzione nodejs per CPU ARM64
 
-Per scaricare ed installare la libreria C pigpio:
+- In caso di Raspberry pi Zero W scegliere la distribuzione per ARM6
 
- verifica prima se la libreria è gia presente tramite: 	**pigpiod -v**
+##### Libreria C pgpio
+verifica prima se la libreria è gia presente tramite: 	  ***pigpiod -v***
+
  
  se non è presente o la versione è molto vecchia eseguire l'installazione:
  
