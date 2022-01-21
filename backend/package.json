@@ -3,7 +3,7 @@
   "main": "rasppi3-gestione-carroarmato.js",
   "dependencies": {
     "express": "4.16.3",
-    "log4js": "0.6.33",
+    "log4js": "6.4.0",
     "pigpio": "^1.1.2"
   },
   "scripts": {
